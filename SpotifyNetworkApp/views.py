@@ -7,6 +7,8 @@ from SpotifyNetworkApp.models import Users, Artists, ArtistAssocs
 from SpotifyNetworkApp.serializers import UsersSerializer, ArtistsSerializer, ArtistAssocsSerializer
 
 # Create your views here.
+
+# API endpoint: /users/
 @csrf_exempt
 def usersApi(request,id=0):
     if request.method=='GET':
@@ -32,7 +34,8 @@ def usersApi(request,id=0):
         user = Users.objects.get(UserID=id)
         user.delete()
         return JsonResponse('Deleted user successfully.', safe=False)
-    
+   
+# API endpoint: /artists/ 
 @csrf_exempt
 def artistsApi(request,id=0):
     if request.method=='GET':
@@ -58,3 +61,30 @@ def artistsApi(request,id=0):
         artist = Artists.objects.get(ArtistId=id)
         artist.delete()
         return JsonResponse('Deleted artist successfully.', safe=False)
+    
+# API endpoint: /artistassocs/
+@csrf_exempt
+def artistassocsApi(request,id=0):
+    if request.method=='GET':
+        artistassocs = ArtistAssocs.objects.all()
+        artistassocs_serializer = ArtistAssocsSerializer(artistassocs, many=True)
+        return JsonResponse(artistassocs_serializer.data, safe=False)
+    elif request.method=='POST':
+        artistassocs_data = JSONParser().parse(request)
+        artistassocs_serializer = ArtistAssocsSerializer(data=artistassocs_data)
+        if artistassocs_serializer.is_valid():
+            artistassocs_serializer.save()
+            return JsonResponse('Artist Association added successfully.', safe=False)
+        return JsonResponse('Failed to add Artist Association', safe=False)
+    elif request.method=='PUT':
+        artistassocs_data = JSONParser().parse(request)
+        artistassocs = ArtistAssocs.objects.get(AssocId=artistassocs_data['AssocId'])
+        artistassocs_serializer=ArtistAssocsSerializer(artistassocs, data=artistassocs_data)
+        if artistassocs_serializer.is_valid():
+            artistassocs_serializer.save()
+            return JsonResponse('Updated Artist Association successfully.', safe=False)
+        return JsonResponse('Failed to update Artist Association', safe=False)
+    elif request.method=='DELETE':
+        artistassoc = ArtistAssocs.objects.get(AssocId=id)
+        artistassoc.delete()
+        return JsonResponse('Deleted Artist Association successfully.', safe=False)

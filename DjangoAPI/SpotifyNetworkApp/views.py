@@ -12,8 +12,11 @@ from SpotifyNetworkApp.serializers import UsersSerializer, ArtistsSerializer, Ar
 @csrf_exempt
 def usersApi(request,id=0):
     if request.method=='GET':
-        users = Users.objects.all()
-        users_serializer = UsersSerializer(users, many=True)
+        # Gets specific user only
+        user = Users.objects.get(UserID=id)
+        # Gets list of al users in system
+        # users = Users.objects.all()
+        users_serializer = UsersSerializer(user, many=False)
         return JsonResponse(users_serializer.data, safe=False)
     elif request.method=='POST':
         users_data = JSONParser().parse(request)

@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'SpotifyNetworkApp',
-    'rest_framework'
+    'rest_framework',
+    'spotify.apps.SpotifyConfig'
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True

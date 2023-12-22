@@ -42,7 +42,7 @@ export class ArtistsNetworkComponent implements OnInit{
     this.service.getIsAuthenticated(payload).subscribe(data=>{
       this.IsAuthenticated = (data as any).status;
       if(this.IsAuthenticated) {
-        // -- SIGN USER INTO WEB APP
+        // -- SIGN USER INTO WEB APP BY REQUEST TO /api/sign-in
         this.router.navigateByUrl(this.MainUrl, { replaceUrl: true });
         console.log("auth access -> render network")
       } else {

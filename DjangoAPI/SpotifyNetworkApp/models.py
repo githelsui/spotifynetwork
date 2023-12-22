@@ -4,6 +4,7 @@ from django.db import models
 
 class Users(models.Model):
     UserId = models.AutoField(primary_key=True)
+    UserEmail = models.CharField(max_length=100)
     UserName = models.CharField(max_length=100)
     
 class Artists(models.Model):

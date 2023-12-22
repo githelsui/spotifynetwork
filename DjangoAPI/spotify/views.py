@@ -3,8 +3,8 @@ from .credentials import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from requests import Request, post
-from .util import update_or_create_user_tokens, is_spotify_authenticated
+from requests import Request, post, get
+from .util import update_or_create_user_tokens, is_spotify_authenticated, get_access_token
 from django.http import HttpResponseRedirect, HttpResponse
 from rest_framework_simplejwt.tokens import RefreshToken
 import json
@@ -15,7 +15,7 @@ import json
 class AuthURL(APIView):
     #returns url that redirects to spotify login
     def get(self, request, format=None):
-        scopes = 'user-top-read user-read-recently-played' #what operations and info we want to access from spotify api
+        scopes = 'user-read-private user-read-email user-top-read user-read-recently-played' #what operations and info we want to access from spotify api
         # url redirecting to spotify login + request for authorization
         url = Request('GET', 'https://accounts.spotify.com/authorize', params={
             'scope': scopes,
@@ -59,10 +59,28 @@ class IsAuthenticated(APIView):
     def post(self, request, formate=None):
         data = json.loads(request.body)
         session = data['session_id']
-        print("session id in isAuthenticated endpoint = " + str(data))
         is_authenticated = is_spotify_authenticated(session)
         return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
-    
+  
+class SpotifyUser(APIView):
+    #TODO: Remove this endpoint/view
+    def get(self, request, formate=None):
+        data = json.loads(request.body)
+        session = data['session_id']
+        access_token = get_access_token(session)
+        # GET request to spotify api https://api.spotify.com/v1/me with access_token as header -> output to response
+        
+        auth_token = "Bearer " + access_token
+        headers = {
+            'Authorization': auth_token,
+        }
+        
+        response = get('https://api.spotify.com/v1/me', headers=headers).json()
+        print(response)
+        # username = response.get('display_name')
+        # email = response.get('email')
+        return Response(response, status=status.HTTP_200_OK)
+        
 class TopArtists(APIView):
     def get(self, request, formate=None):
         return ""

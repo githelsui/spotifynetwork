@@ -39,10 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'SpotifyNetworkApp',
     'rest_framework',
     'rest_framework_simplejwt',
-    'spotify.apps.SpotifyConfig'
+    'spotify.apps.SpotifyConfig',
+    'SpotifyNetworkApp.apps.SpotifynetworkappConfig'
 ]
 
 REST_FRAMEWORK = {

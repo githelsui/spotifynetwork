@@ -1,7 +1,7 @@
 from .models import SpotifyToken
 from datetime import timedelta
 from django.utils import timezone
-from requests import Request, post
+from requests import Request, post, get
 from .credentials import CLIENT_ID, CLIENT_SECRET
 
 # Handling tokens from Spotify API
@@ -11,6 +11,13 @@ def get_user_tokens(session_id):
     user_tokens = SpotifyToken.objects.filter(user=session_id)
     if user_tokens.exists():
         return user_tokens[0]
+    else:
+        return None
+    
+def get_access_token(session_id):
+    current_session = get_user_tokens(session_id)
+    if current_session:
+        return current_session['access_token']
     else:
         return None
 
@@ -61,4 +68,31 @@ def refresh_spotify_token(session_id):
     expires_in = response.get('expires_in')
     
     update_or_create_user_tokens(session_id, access_token, token_type, expires_in, refresh_token)
+        
+        
+def get_spotify_account(session):
+    status = None 
+    item = None
+    
+    access_token = get_access_token(session)
+    auth_token = "Bearer " + access_token
+    headers = {
+            'Authorization': auth_token,
+    }
+        
+    response = get('https://api.spotify.com/v1/me', headers=headers).json()
+    print(response)
+    if response.has_key('error'): #API returned an error
+        status = False 
+    else:
+        username = response.get('display_name')
+        email = response.get('email')
+        user = {
+            'UserName': username,
+            'UserEmail': email
+        }
+        item = user
+        status = True
+    result = {'status': status, 'item': item}
+    return result
         

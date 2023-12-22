@@ -5,6 +5,7 @@ class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
         fields = ('UserId',
+                  'UserEmail',
                   'UserName')
         
 class ArtistsSerializer(serializers.ModelSerializer):

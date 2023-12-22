@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,10 +41,24 @@ INSTALLED_APPS = [
     'corsheaders',
     'SpotifyNetworkApp',
     'rest_framework',
+    'rest_framework_simplejwt',
     'spotify.apps.SpotifyConfig'
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # Add other authentication classes if needed
+    ),
+}
+
 CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -128,3 +143,24 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# -- Angular Frontend Connection --
+
+# Add the path to your Angular app's dist folder
+ANGULAR_APP_DIR = os.path.dirname('/Users/githel/SpotifyNetwork/UI/SpotifyNetwork/dist')
+
+STATICFILES_DIRS = [
+    ANGULAR_APP_DIR,
+]
+
+# Set the STATIC_ROOT to collect static files during deployment
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_NAME = 'my_session_id'  # Replace with your desired session cookie name
+SESSION_COOKIE_AGE = 3600  # Set the session age as needed (in seconds)
+SESSION_COOKIE_PATH = '/'
+SESSION_COOKIE_DOMAIN = '.localhos:4200'
+SESSION_COOKIE_SECURE = False  # if using HTTPS
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_AGE = 1209600  # Set the session age as needed (in seconds)

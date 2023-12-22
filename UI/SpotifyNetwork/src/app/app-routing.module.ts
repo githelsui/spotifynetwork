@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { ArtistsNetworkComponent } from './artists-network/artists-network.component'
 import { UserComponent } from './user/user.component'
 import { SignInComponent } from './user/sign-in/sign-in.component';
+import { UnauthViewComponent } from './unauth-view/unauth-view.component';
 
 const routes: Routes = [
   {
@@ -14,6 +15,9 @@ const routes: Routes = [
   },
   {
     path: 'user', component: UserComponent
+  },
+  {
+    path: 'unauth-view', component: UnauthViewComponent
   }
 ];
 

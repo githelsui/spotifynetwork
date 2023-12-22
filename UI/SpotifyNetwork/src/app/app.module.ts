@@ -7,6 +7,7 @@ import { UserComponent } from './user/user.component';
 import { SignInComponent } from './user/sign-in/sign-in.component';
 import { ArtistsNetworkComponent } from './artists-network/artists-network.component';
 import { ShowNetworkComponent } from './artists-network/show-network/show-network.component';
+import { UnauthViewComponent } from './unauth-view/unauth-view.component';
 import { SharedService } from './shared.service';
 
 import { HttpClientModule } from '@angular/common/http';
@@ -18,7 +19,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     UserComponent,
     SignInComponent,
     ArtistsNetworkComponent,
-    ShowNetworkComponent
+    ShowNetworkComponent,
+    UnauthViewComponent
   ],
   imports: [
     BrowserModule,

@@ -7,6 +7,7 @@ import {Observable} from 'rxjs';
 })
 export class SharedService {
 
+  //Access to our Web API -> Backend 
 readonly APIUrl = "http://127.0.0.1:8000/";
 
   constructor(private http:HttpClient) { }
@@ -19,6 +20,15 @@ readonly APIUrl = "http://127.0.0.1:8000/";
 
   getUserInfo(val:any):Observable<any[]>{
     return this.http.get<any[]>(this.APIUrl + '/users/' + val);
+  } 
+
+  // Spotify API
+  getSpotifyAuthSignIn():Observable<any[]>{
+    return this.http.get<any[]>(this.APIUrl + 'spotify/get-auth-url');
+  } 
+
+  getIsAuthenticated(val:any):Observable<any[]>{
+    return this.http.post<any[]>(this.APIUrl + 'spotify/is-authenticated', val);
   } 
 
   // Artists

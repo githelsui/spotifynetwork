@@ -1,0 +1,33 @@
+.overlay-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 50%;
+    display: flex;
+    align-items:  flex-end;
+    justify-content: flex-end;
+    z-index: 1000; /* Ensure it's above other elements */
+  }
+  
+  .overlay-buttons {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+
+  .legend-label {
+    font-size: 16px;
+    background-color: white;
+    text-align: right;
+    padding: 3px;
+    margin-bottom: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .text-button:hover {
+    background-color: #224b67;
+    color: white;
+  }

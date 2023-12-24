@@ -27,6 +27,7 @@ export class ArtistsNetworkComponent implements OnInit{
   AuthSession:any=null;
   SelectedTimeFrame:string="recent";
   AccountSelected:boolean=false;
+  UserName:string="";
   
   ngOnInit(): void {
     this.checkIfAuthenticated();
@@ -37,6 +38,9 @@ export class ArtistsNetworkComponent implements OnInit{
 
   checkIfAuthenticated():void {
     this.AuthSession = this.authService.getAuthorization();
+    if(this.AuthSession != null){
+      this.UserName = this.AuthSession["UserName"];
+    }
   }
 
   setTimeFrame(data: string) {

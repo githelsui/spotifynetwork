@@ -13,6 +13,7 @@ import { SharedService } from './shared.service';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NetworkSidebarComponent } from './artists-network/network-sidebar/network-sidebar.component';
+import { NetworkLegendComponent } from './artists-network/show-network/network-legend/network-legend.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { NetworkSidebarComponent } from './artists-network/network-sidebar/netwo
     ArtistsNetworkComponent,
     ShowNetworkComponent,
     UnauthViewComponent,
-    NetworkSidebarComponent
+    NetworkSidebarComponent,
+    NetworkLegendComponent
   ],
   imports: [
     BrowserModule,

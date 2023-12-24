@@ -8,6 +8,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 export class NetworkSidebarComponent {
 
   @Input() AuthSession:any=null;
+  @Input() UserName:string="";
   @Output() TimeFrame = new EventEmitter<string>();
   @Output() AccountSelected = new EventEmitter<boolean>();
   SelectedTimeFrame:string="recent";

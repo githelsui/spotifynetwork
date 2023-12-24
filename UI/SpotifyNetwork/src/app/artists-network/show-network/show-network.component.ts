@@ -18,7 +18,9 @@ export class ShowNetworkComponent implements OnInit {
   GenreColor:any=null;
   GenreLoaded:boolean=false;
 
-  constructor(private service:SharedService,){}
+  constructor(
+    private service:SharedService
+    ){}
 
   //Development Data
   Nodes:any=[
@@ -129,6 +131,8 @@ export class ShowNetworkComponent implements OnInit {
     .attr('stroke', (d: any) => this.getNodeColor(d.genre)) // Set the border color //TODO: Node color correspond to node.genre
     .attr('stroke-width', 0.5) // Set the border width
     .style('cursor', 'pointer')
+    .on('mouseover', (event, d) => handleNodeClick(event, d)) 
+    .on('mouseout', () => hideTooltip())
     .call(dragBehavior as any);
 
     // Attach text labels to nodes
@@ -142,7 +146,21 @@ export class ShowNetworkComponent implements OnInit {
     .attr('text-anchor', 'start')
     .attr('dominant-baseline', 'central')
     .attr('fill', 'black')
+    .style('cursor', 'pointer')
+    .on('mouseover', (event, d) => handleNodeClick(event, d)) 
+    .on('mouseout', () => hideTooltip())
     .text((d: any) => d.name);
+
+    // create a tooltip
+    var tooltip = d3.select((this.graphContainer as any).nativeElement)
+    .append("div")
+    .attr('height', 50)
+    .style("position", "absolute")
+    .style("visibility", "hidden")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style('border', '1px solid gray') 
+    .style("padding", "10px");
 
     simulation
       .on('tick', () => {
@@ -160,6 +178,31 @@ export class ShowNetworkComponent implements OnInit {
           .attr('x', (d: any) => d.x)
           .attr('y', (d: any) => d.y);
       });
+
+    function handleNodeClick(event: any, artist: any) {
+      const content = `<div class="d-flex justify-content-center align-items-center">
+      <div class="d-flex flex-column">
+          <img src='https://github.com/holtzy/D3-graph-gallery/blob/master/img/section/ArcSmal.png?raw=true'>
+          <h4>&gt; ${artist.name}</h4>
+          <h6>Rank: ${artist.rank}</h6>
+          <h6>Genres: ${artist.genre}</h6>
+          <h6>Followers: 100</h6>
+          <h6>Most Similar: neighbors</h6>
+      </div>
+      </div>`
+      // const tooltipContent = `${artist.name}`;
+      tooltip.html(content);
+
+      // Set tooltip position relative to the mouse pointer
+      tooltip
+        .style('left', event.pageX + 10 + 'px')
+        .style('top', event.pageY - 10 + 'px')
+        .style('visibility', 'visible');
+    }
+
+    function hideTooltip() {
+      tooltip.style('visibility', 'hidden');
+    }
 
     function dragstarted(event: any){
       if (!event.active) simulation.alphaTarget(0.3).restart();

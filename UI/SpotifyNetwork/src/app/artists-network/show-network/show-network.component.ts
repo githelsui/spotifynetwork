@@ -1,5 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ElementRef } from '@angular/core';
 import * as d3 from 'd3';
+import { SharedService } from '../../shared.service'
 
 @Component({
   selector: 'app-show-network',
@@ -7,24 +8,210 @@ import * as d3 from 'd3';
   styleUrl: './show-network.component.css'
 })
 export class ShowNetworkComponent implements OnInit {
+  @ViewChild('graphContainer', { static: true }) graphContainer: ElementRef | undefined;
   @Input() AuthSession:any=null;
   @Input() TimeFrame:string='recent';
 
   // Private Variables
-  private width:any=928;
+  Width:number=window.innerWidth;
+  Height:number=window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+  GenreColor:any=null;
+  GenreLoaded:boolean=false;
+
+  constructor(private service:SharedService,){}
+
+  //Development Data
+  Nodes:any=[
+    { id: 1, name: 'John', rank: 1, genre: 'acoustic' },
+    { id: 2, name: 'Paul', rank: 2, genre: 'acoustic' },
+    { id: 3, name: 'George', rank: 3, genre: 'acoustic' },
+    { id: 4, name: 'Ringo', rank: 4, genre: 'edm' },
+    { id: 5, name: 'Bob', rank: 5, genre: 'edm' },
+    { id: 6, name: 'Alice', rank: 6, genre: 'edm' },
+    { id: 7, name: 'Charlie', rank: 7, genre: 'afrobeat' },
+    { id: 8, name: 'David', rank: 8, genre: 'afrobeat' },
+    { id: 9, name: 'Eva', rank: 9, genre: 'afrobeat' },
+    { id: 10, name: 'Frank', rank: 10, genre: 'chill' },
+    { id: 11, name: 'Grace', rank: 11, genre: 'chill' },
+    { id: 12, name: 'Henry', rank: 12, genre: 'chill' },
+    { id: 13, name: 'Ivy', rank: 13, genre: 'blues' },
+    { id: 14, name: 'Jack', rank: 14, genre: 'blues' },
+    { id: 15, name: 'Karen', rank: 15, genre: 'disco' },
+    { id: 16, name: 'Leo', rank: 16, genre: 'disco' },
+    { id: 17, name: 'Mia', rank: 17, genre: 'disco' },
+    { id: 18, name: 'Nathan', rank: 18, genre: 'folk' },
+    { id: 19, name: 'Olivia', rank: 19, genre: 'folk' },
+    { id: 20, name: 'Peter', rank: 20, genre: 'folk' },
+  ];
+  Links:any=[  { source: 1, target: 2, weight: 1.5 },
+    { source: 2, target: 3, weight: 2.0 },
+    { source: 3, target: 4, weight: 1.8 },
+    { source: 4, target: 5, weight: 1.2 },
+    { source: 5, target: 6, weight: 2.5 },
+    { source: 6, target: 7, weight: 1.0 },
+    { source: 7, target: 8, weight: 1.7 },
+    { source: 8, target: 9, weight: 2.3 },
+    { source: 9, target: 10, weight: 1.6 },
+    { source: 10, target: 11, weight: 1.9 },
+    { source: 11, target: 12, weight: 2.2 },
+    { source: 12, target: 13, weight: 1.3 },
+    { source: 13, target: 14, weight: 1.1 },
+    { source: 14, target: 15, weight: 1.4 },
+    { source: 15, target: 16, weight: 1.8 },
+    { source: 16, target: 17, weight: 2.1 },
+    { source: 17, target: 18, weight: 1.7 },
+    { source: 18, target: 19, weight: 2.0 },
+    { source: 19, target: 20, weight: 1.5 },];
 
   ngOnInit(): void {
-    this.setTimeFrame(this.TimeFrame);
+    this.initGraph();
+  }
+
+  initGraph(): void {
+    this.service.getGenreColor().subscribe(
+      (data) => {
+        this.GenreColor = data;
+        this.GenreLoaded = true;
+        this.setTimeFrame(this.TimeFrame);
+      },
+      (error) => {
+        console.error('Error loading data:', error);
+        this.GenreLoaded = false;
+      }
+    );
   }
 
   setTimeFrame(data: string) {
-    console.log(data);
-    this.TimeFrame = data
-    this.renderNetwork();
+    this.resetGraph();
+    this.TimeFrame = data;
+    this.createForceDirectedGraph();
   }
 
-  renderNetwork(){
-
+  private resetGraph(): void {
+    (this.graphContainer as any).nativeElement.innerHTML =  '';
   }
 
+  private createForceDirectedGraph(): void {
+
+    const svg = d3.select((this.graphContainer as any).nativeElement)
+      .append('svg')
+      .attr('width', this.Width)
+      .attr('height', this.Height);
+
+    const simulation = d3.forceSimulation(this.Nodes as any)
+      .force('link', d3.forceLink(this.Links)
+        .id((d: any) => d.id)
+        .distance((d: any) => this.getLinkDistance(d.weight))) 
+      .force('charge', d3.forceManyBody())
+      .force('center', d3.forceCenter(this.Width / 2, this.Height / 2));
+
+    const link = svg.selectAll('line')
+      .data(this.Links)
+      .enter().append('line')
+      .style('stroke', 'black')
+      .style('stroke-dasharray', '5,5'); // Set the dash array here
+
+    const dragBehavior = d3.drag<SVGGElement, { id: number, name: string }, { id: number, name: string }>()
+      .on('start', (event: d3.D3DragEvent<SVGGElement, { id: number, name: string }, { id: number, name: string }>) => dragstarted(event))
+      .on('drag', (event: d3.D3DragEvent<SVGGElement, { id: number, name: string }, { id: number, name: string }>) => dragged(event))
+      .on('end', (event: d3.D3DragEvent<SVGGElement, { id: number, name: string }, { id: number, name: string }>) => dragended(event));
+    
+    const node = svg.selectAll('.node')
+    .data(this.Nodes)
+    .enter().append('g')
+    .attr('class', 'node')
+    .append('rect')
+    .attr('width', (d: any) => this.getNodeWidth(d.name ,d.rank))  //TODO: Node width correspond to node.name length, call getNodeWidth()
+    .attr('height', (d: any) => this.getNodeHeight(d.rank)) //TODO: getNodeHeight()
+    .attr('dx', 10) // Adjust the position
+    .attr('dy', '.5em')
+    .attr('fill', 'white') 
+    .attr('stroke', (d: any) => this.getNodeColor(d.genre)) // Set the border color //TODO: Node color correspond to node.genre
+    .attr('stroke-width', 0.5) // Set the border width
+    .style('cursor', 'pointer')
+    .call(dragBehavior as any);
+
+    // Attach text labels to nodes
+    const labels = svg.selectAll('.label')
+    .data(this.Nodes)
+    .enter().append('text')
+    .attr('class', 'label')
+    .attr('font-size', (d: any) => this.getLabelSize(d.rank)) //TODO: Node size correspond to node.rank, call getLabelSize()
+    .attr('dx', 12) // Adjust the label position
+    .attr('dy', '.35em')
+    .attr('text-anchor', 'start')
+    .attr('dominant-baseline', 'central')
+    .attr('fill', 'black')
+    .text((d: any) => d.name);
+
+    simulation
+      .on('tick', () => {
+        link
+          .attr('x1', (d: any) => d.source.x)
+          .attr('y1', (d: any) => d.source.y)
+          .attr('x2', (d: any) => d.target.x)
+          .attr('y2', (d: any) => d.target.y);
+
+        node
+          .attr('x', (d: any) => d.x)
+          .attr('y', (d: any) => d.y);
+
+        labels
+          .attr('x', (d: any) => d.x)
+          .attr('y', (d: any) => d.y);
+      });
+
+    function dragstarted(event: any){
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      event.subject.fx = event.subject.x;
+      event.subject.fy = event.subject.y;
+    }
+
+    function dragged(event: any){
+      event.subject.fx = event.x;
+      event.subject.fy = event.y;
+    }
+
+    function dragended(event: any){
+      if (!event.active) simulation.alphaTarget(0);
+      event.subject.fx = null;
+      event.subject.fy = null;
+    }
+  }
+
+  private getLinkDistance(weight: any): number {
+    return 400 * weight;
+  }
+
+  // Based on artist.rank
+  private getLabelSize(rank: any): number {
+    const minFontSize = 18;
+    const maxFontSize = 120;
+    const fontSize = minFontSize + (maxFontSize - minFontSize) * (rank / 100);
+    return Math.min(maxFontSize, Math.max(minFontSize, fontSize));
+  }
+
+  //Based on getLabelSize() font size + 2px
+  private getNodeHeight(rank: any): number {
+    const fontSize = this.getLabelSize(rank);
+    return fontSize + 2;
+  }
+
+  //Based on width = font size * string length * estimated average width per character 
+  private getNodeWidth(label: any, rank: any): number {
+    const averageWidthPerCharacter = 0.75;
+    const fontSize = this.getLabelSize(rank) as any
+    const estimatedWidth =  label.length * fontSize * averageWidthPerCharacter;
+    return estimatedWidth;
+  }
+
+  private getNodeColor(genre: any){
+    if(this.GenreColor != null){
+      const color = this.GenreColor.genres[genre]
+      console.log(color)
+      return color
+    } else {
+      return "#000000"
+    }
+  }
 }

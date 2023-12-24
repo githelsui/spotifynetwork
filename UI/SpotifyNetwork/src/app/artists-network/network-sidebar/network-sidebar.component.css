@@ -7,6 +7,7 @@
     align-items:  flex-start;
     justify-content: flex-start;
     z-index: 1000; /* Ensure it's above other elements */
+    background-color: transparent;
   }
   
   .overlay-buttons {
@@ -18,7 +19,7 @@
 
   .text-button {
     font-size: 18px;
-    background-color: white;
+    background-color: transparent;
     text-align: left;
     padding: 5px;
     margin-bottom: 5px;

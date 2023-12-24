@@ -7,8 +7,11 @@ import {Observable} from 'rxjs';
 })
 export class SharedService {
 
+  // Internal assets
+  private genresUrl = 'assets/genres.json';
+
   //Access to our Web API -> Backend 
-readonly APIUrl = "http://127.0.0.1:8000/";
+  readonly APIUrl = "http://127.0.0.1:8000/";
 
   constructor(private http:HttpClient) { }
 
@@ -26,14 +29,17 @@ readonly APIUrl = "http://127.0.0.1:8000/";
     return this.http.post<any[]>(this.APIUrl + 'spotify/is-authenticated', val);
   } 
 
-  // Artists
+  //Genres
+  getGenreColor(): Observable<any> {
+    return this.http.get(this.genresUrl);
+  }
 
+  // TODO: Artists
   getTopArtists():Observable<any[]>{
     return this.http.get<any[]>(this.APIUrl + '/artists/');
   }
 
   // Artist Associations
-
   addArtistAssoc(val:any){
     return this.http.post<any[]>(this.APIUrl + '/artistassocs/', val);
   }  

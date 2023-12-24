@@ -1,1 +1,9 @@
-<p>artists-network works!</p>
+<div class="container-fluid">
+  <app-network-sidebar [AuthSession]="AuthSession" (TimeFrame)="setTimeFrame($event)" (AccountSelected)="setAccountView($event)"></app-network-sidebar>
+  <div class="vh-100 d-flex justify-content-center align-items-center">
+      <div class="d-flex flex-column">
+          <h3>{{SelectedTimeFrame}}</h3>
+          <app-show-network [AuthSession]="AuthSession" [TimeFrame]="SelectedTimeFrame"></app-show-network>
+      </div>
+  </div>
+</div>

@@ -21,10 +21,10 @@ class UserSignIn(APIView):
         
     def post(self, request, formate=None):
         data = json.loads(request.body)
-        session = data['session_id']
-        response = self.UserManager.sign_in(session)
+        session_id = data['session_id']
+        response = self.UserManager.sign_in(session_id)
         user = response['item']
         if not response['status']:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
-            return Response(user, status=status.HTTP_200_OK)
+            return Response({'item': user}, status=status.HTTP_200_OK)

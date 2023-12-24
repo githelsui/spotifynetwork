@@ -17,10 +17,16 @@ class UserDAO:
     
     def user_exists(self, user):
         email = user['UserEmail']
-        user = Users.objects.get(UserEmail=email)
-        if user:
-            return True
-        return False
+        print("Email: " + email)
+        
+        try:
+            user = Users.objects.get(UserEmail=email)
+            if user:
+                return True
+            return False
+        except Users.DoesNotExist:
+            print("Does not exist")
+            return False
     
     def save_user(self, user):
         username = user['UserName']

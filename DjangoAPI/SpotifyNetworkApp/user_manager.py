@@ -18,11 +18,11 @@ class UserManager:
          # TODO: Initialize Logger object for Manager Layer
         self.Logger = ''
         
-    def sign_in(self, session):
+    def sign_in(self, session_id):
         status = None
         item = None
         
-        response = get_spotify_account(session)
+        response = get_spotify_account(session_id)
         status = response['status']
         if status:
             item = response['item']
@@ -33,6 +33,6 @@ class UserManager:
                 status = True
         else:
             status = False
-            
+        
         result = {'status': status, 'item': item}
         return result

@@ -17,7 +17,7 @@ def get_user_tokens(session_id):
 def get_access_token(session_id):
     current_session = get_user_tokens(session_id)
     if current_session:
-        return current_session['access_token']
+        return current_session.access_token
     else:
         return None
 
@@ -70,19 +70,19 @@ def refresh_spotify_token(session_id):
     update_or_create_user_tokens(session_id, access_token, token_type, expires_in, refresh_token)
         
         
-def get_spotify_account(session):
+def get_spotify_account(session_id):
     status = None 
     item = None
     
-    access_token = get_access_token(session)
+    access_token = get_access_token(session_id)
     auth_token = "Bearer " + access_token
     headers = {
             'Authorization': auth_token,
     }
         
     response = get('https://api.spotify.com/v1/me', headers=headers).json()
-    print(response)
-    if response.has_key('error'): #API returned an error
+   
+    if 'error' in response: #API returned an error
         status = False 
     else:
         username = response.get('display_name')

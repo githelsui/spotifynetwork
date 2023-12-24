@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SharedService } from '../shared.service'
+import { AuthService } from '../auth.service';
+import { ShowNetworkComponent } from './show-network/show-network.component'
 
 @Component({
   selector: 'app-artists-network',
@@ -8,47 +10,46 @@ import { SharedService } from '../shared.service'
   styleUrl: './artists-network.component.css'
 })
 export class ArtistsNetworkComponent implements OnInit{
-
-  //Empty constructor
-  constructor(private router: Router, private route: ActivatedRoute, private service:SharedService){}
+  
+  constructor(
+    private router: Router, 
+    private route: ActivatedRoute, 
+    private service:SharedService,
+    private authService: AuthService
+    ){}
 
   //Private variables
+  @ViewChild(ShowNetworkComponent, { static: true }) graphView: ShowNetworkComponent | undefined;
+
   IsAuthenticated:boolean=false;
   MainUrl:string="/artists-network";
   UnauthUrl:string="/unauth-view";
-  AuthToken:string="";
-
-  // Check if request is authenticated -> if true: access to actual network
-  // if false -> redirect to Unauthorized access page
+  AuthSession:any=null;
+  SelectedTimeFrame:string="recent";
+  AccountSelected:boolean=false;
+  
   ngOnInit(): void {
     this.checkIfAuthenticated();
+    if(!this.AuthSession){
+      this.router.navigateByUrl("/unauth-view", { replaceUrl: true });
+    }
   }
 
   checkIfAuthenticated():void {
-    this.route.queryParams.subscribe(params => {
-      const token = params['token'];
-      if (token) {
-        console.log('token ' + token)
-        this.AuthToken = token
-      }
-    });
+    this.AuthSession = this.authService.getAuthorization();
+  }
 
-    var payload = {
-      'session_id': this.AuthToken
+  setTimeFrame(data: string) {
+    this.SelectedTimeFrame = data;
+    if (this.graphView) {
+      this.graphView.setTimeFrame(this.SelectedTimeFrame);
     }
+  }
 
-    // -- CHECK SPOTIFY AUTH
-    console.log("Checking auth - artist-network")
-    this.service.getIsAuthenticated(payload).subscribe(data=>{
-      this.IsAuthenticated = (data as any).status;
-      if(this.IsAuthenticated) {
-        // -- SIGN USER INTO WEB APP BY REQUEST TO /api/sign-in
-        this.router.navigateByUrl(this.MainUrl, { replaceUrl: true });
-        console.log("auth access -> render network")
-      } else {
-        this.router.navigateByUrl(this.UnauthUrl, { replaceUrl: true });
-      }
-     
-    })
- }
+  setAccountView(data: boolean) {
+    this.AccountSelected = data;
+    if(this.AccountSelected) {
+      this.router.navigateByUrl("/unauth-view", { replaceUrl: true });
+    }
+  }
 }

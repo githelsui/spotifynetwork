@@ -1,0 +1,52 @@
+/* overlay.component.scss */
+
+.overlay-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    align-items:  flex-start;
+    justify-content: flex-start;
+    z-index: 1000; /* Ensure it's above other elements */
+  }
+  
+  .overlay-buttons {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+
+  .text-button {
+    font-size: 18px;
+    background-color: white;
+    text-align: left;
+    padding: 5px;
+    margin-bottom: 5px;
+    border: none;
+    cursor: pointer;
+    font-style: oblique;
+    transition: background-color 0.3s ease;
+  }
+  
+  .text-button:hover {
+    background-color: #224b67;
+    color: white;
+  }
+
+  .profile-button {
+    font-size: 25px;
+    background-color: white;
+    text-align: left;
+    padding: 5px;
+    margin-bottom: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .profile-button:hover {
+    background-color: #385365;
+    color: white;
+  }

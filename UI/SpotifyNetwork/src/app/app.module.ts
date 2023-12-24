@@ -12,6 +12,7 @@ import { SharedService } from './shared.service';
 
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NetworkSidebarComponent } from './artists-network/network-sidebar/network-sidebar.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     SignInComponent,
     ArtistsNetworkComponent,
     ShowNetworkComponent,
-    UnauthViewComponent
+    UnauthViewComponent,
+    NetworkSidebarComponent
   ],
   imports: [
     BrowserModule,

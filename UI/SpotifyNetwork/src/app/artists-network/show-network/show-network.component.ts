@@ -111,7 +111,10 @@ export class ShowNetworkComponent implements OnInit {
       .data(this.Links)
       .enter().append('line')
       .style('stroke', 'black')
-      .style('stroke-dasharray', '5,5'); // Set the dash array here
+      .style('stroke-dasharray', '5,5') 
+      .style('cursor', 'pointer')
+      .on('mouseover', (event, d) => handleLinkClick(event, d)) 
+      .on('mouseout', () => hideTooltip());
 
     const dragBehavior = d3.drag<SVGGElement, { id: number, name: string }, { id: number, name: string }>()
       .on('start', (event: d3.D3DragEvent<SVGGElement, { id: number, name: string }, { id: number, name: string }>) => dragstarted(event))
@@ -190,7 +193,21 @@ export class ShowNetworkComponent implements OnInit {
           <h6>Most Similar: neighbors</h6>
       </div>
       </div>`
-      // const tooltipContent = `${artist.name}`;
+
+      tooltip.html(content);
+      tooltip
+        .style('left', event.pageX + 10 + 'px')
+        .style('top', event.pageY - 10 + 'px')
+        .style('visibility', 'visible');
+    }
+
+    function handleLinkClick(event: any, link: any) {
+      const content = `<div class="d-flex justify-content-center align-items-center">
+      <div class="d-flex flex-column">
+          <h5>${link.source} and ${link.target}</h5>
+          <h5>&gt; Similarity Score: ${link.weight}</h5>
+      </div>
+      </div>`
       tooltip.html(content);
 
       // Set tooltip position relative to the mouse pointer

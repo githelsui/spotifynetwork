@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-network-legend',
@@ -6,7 +6,17 @@ import { Component } from '@angular/core';
   styleUrl: './network-legend.component.css'
 })
 export class NetworkLegendComponent {
-  selectGenre(){
+
+  @Input() TopGenres:any=[];
+
+  //Development Data
+  items = [
+    { name: 'acoustic', color: '#1f78c1' },
+    { name: 'afrobeat', color: '#33a02c' },
+    { name: 'alternative', color: '#ff7f00' }
+  ];
+
+  selectGenre(genre: any){
     
   }
 }

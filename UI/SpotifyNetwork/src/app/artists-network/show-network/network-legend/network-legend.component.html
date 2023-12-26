@@ -1,7 +1,9 @@
 <div class="overlay-container">
     <div class="overlay-buttons">
       <div *ngFor="let item of items">
-        <button class="legend-label" (click)="selectGenre(item)">{{ item.name }}</button>
+        <button class="legend-label" (click)="selectGenre(item)">
+          <div class="color"></div>{{ item.name }}
+        </button>
       </div>
     </div>
 </div>

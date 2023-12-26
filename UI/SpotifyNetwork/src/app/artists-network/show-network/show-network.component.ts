@@ -1,4 +1,5 @@
-import { Component, Input, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ElementRef, PLATFORM_ID, Inject, HostListener, NgZone } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import * as d3 from 'd3';
 import { SharedService } from '../../shared.service'
 
@@ -11,15 +12,18 @@ export class ShowNetworkComponent implements OnInit {
   @ViewChild('graphContainer', { static: true }) graphContainer: ElementRef | undefined;
   @Input() AuthSession:any=null;
   @Input() TimeFrame:string='recent';
+  TopGenres:any=[];
 
   // Private Variables
-  Width:number=window.innerWidth;
-  Height:number=window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+  Width:number=0;
+  Height:number=0;
   GenreColor:any=null;
   GenreLoaded:boolean=false;
 
   constructor(
-    private service:SharedService
+    private service:SharedService,
+    private zone: NgZone,
+    @Inject(PLATFORM_ID) private platformId: Object,
     ){}
 
   //Development Data
@@ -64,9 +68,19 @@ export class ShowNetworkComponent implements OnInit {
     { source: 17, target: 18, weight: 1.7 },
     { source: 18, target: 19, weight: 2.0 },
     { source: 19, target: 20, weight: 1.5 },];
-
+   
   ngOnInit(): void {
     this.initGraph();
+  }
+
+  private setScreenDimensions(): void {
+    this.Width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    this.Height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event): void {
+    this.setScreenDimensions();
   }
 
   initGraph(): void {
@@ -84,6 +98,7 @@ export class ShowNetworkComponent implements OnInit {
   }
 
   setTimeFrame(data: string) {
+    this.setScreenDimensions();
     this.resetGraph();
     this.TimeFrame = data;
     this.createForceDirectedGraph();
@@ -94,11 +109,13 @@ export class ShowNetworkComponent implements OnInit {
   }
 
   private createForceDirectedGraph(): void {
-
+    console.log("width: " + this.Width)
+    console.log("height: " + this.Height)
     const svg = d3.select((this.graphContainer as any).nativeElement)
       .append('svg')
       .attr('width', this.Width)
-      .attr('height', this.Height);
+      .attr('height', this.Height)
+      .style('cursor', 'pointer');
 
     const simulation = d3.forceSimulation(this.Nodes as any)
       .force('link', d3.forceLink(this.Links)
@@ -106,6 +123,12 @@ export class ShowNetworkComponent implements OnInit {
         .distance((d: any) => this.getLinkDistance(d.weight))) 
       .force('charge', d3.forceManyBody())
       .force('center', d3.forceCenter(this.Width / 2, this.Height / 2));
+
+    const zoom = d3
+    .zoom()
+    .scaleExtent([1, 10]) // Set the scale extent as needed
+    .on('zoom', (event) => zoomed(event));
+    svg.call(zoom as any)
 
     const link = svg.selectAll('line')
       .data(this.Links)
@@ -120,19 +143,19 @@ export class ShowNetworkComponent implements OnInit {
       .on('start', (event: d3.D3DragEvent<SVGGElement, { id: number, name: string }, { id: number, name: string }>) => dragstarted(event))
       .on('drag', (event: d3.D3DragEvent<SVGGElement, { id: number, name: string }, { id: number, name: string }>) => dragged(event))
       .on('end', (event: d3.D3DragEvent<SVGGElement, { id: number, name: string }, { id: number, name: string }>) => dragended(event));
-    
+
     const node = svg.selectAll('.node')
     .data(this.Nodes)
     .enter().append('g')
     .attr('class', 'node')
     .append('rect')
-    .attr('width', (d: any) => this.getNodeWidth(d.name ,d.rank))  //TODO: Node width correspond to node.name length, call getNodeWidth()
-    .attr('height', (d: any) => this.getNodeHeight(d.rank)) //TODO: getNodeHeight()
+    .attr('width', (d: any) => this.getNodeWidth(d.name ,d.rank))  
+    .attr('height', (d: any) => this.getNodeHeight(d.rank))
     .attr('dx', 10) // Adjust the position
     .attr('dy', '.5em')
-    .attr('fill', 'white') 
-    .attr('stroke', (d: any) => this.getNodeColor(d.genre)) // Set the border color //TODO: Node color correspond to node.genre
-    .attr('stroke-width', 0.5) // Set the border width
+    .attr('fill', (d: any) => this.getNodeColor(d.genre)) 
+    .attr('stroke', (d: any) => this.getNodeColor(d.genre)) 
+    .attr('stroke-width', 5) // Set the border width
     .style('cursor', 'pointer')
     .on('mouseover', (event, d) => handleNodeClick(event, d)) 
     .on('mouseout', () => hideTooltip())
@@ -143,16 +166,16 @@ export class ShowNetworkComponent implements OnInit {
     .data(this.Nodes)
     .enter().append('text')
     .attr('class', 'label')
-    .attr('font-size', (d: any) => this.getLabelSize(d.rank)) //TODO: Node size correspond to node.rank, call getLabelSize()
+    .attr('font-size', (d: any) => this.getLabelSize(d.rank))
     .attr('dx', 12) // Adjust the label position
     .attr('dy', '.35em')
     .attr('text-anchor', 'start')
     .attr('dominant-baseline', 'central')
-    .attr('fill', 'black')
+    .attr('fill', 'white')
     .style('cursor', 'pointer')
     .on('mouseover', (event, d) => handleNodeClick(event, d)) 
     .on('mouseout', () => hideTooltip())
-    .text((d: any) => d.name);
+    .text((d: any) => (d.name).toUpperCase());
 
     // create a tooltip
     var tooltip = d3.select((this.graphContainer as any).nativeElement)
@@ -182,6 +205,7 @@ export class ShowNetworkComponent implements OnInit {
           .attr('y', (d: any) => d.y);
       });
 
+    //hover
     function handleNodeClick(event: any, artist: any) {
       const content = `<div class="d-flex justify-content-center align-items-center">
       <div class="d-flex flex-column">
@@ -221,6 +245,15 @@ export class ShowNetworkComponent implements OnInit {
       tooltip.style('visibility', 'hidden');
     }
 
+    const zone = this.zone;
+    function zoomed(event: any) {
+      zone.runOutsideAngular(() => {
+        requestAnimationFrame(() => {
+          svg.attr('transform', event.transform);
+        });
+      });
+    }
+
     function dragstarted(event: any){
       if (!event.active) simulation.alphaTarget(0.3).restart();
       event.subject.fx = event.subject.x;
@@ -240,26 +273,34 @@ export class ShowNetworkComponent implements OnInit {
   }
 
   private getLinkDistance(weight: any): number {
-    return 400 * weight;
+    return 450 * weight;
   }
 
   // Based on artist.rank
   private getLabelSize(rank: any): number {
-    const minFontSize = 18;
-    const maxFontSize = 120;
-    const fontSize = minFontSize + (maxFontSize - minFontSize) * (rank / 100);
+    // Lower the rank, the larger the size 
+    // const tempRank = -rank;
+    const minFontSize = 20;
+    const maxFontSize = 60;
+    // Transform the rank using a non-linear function
+    const transformedRank = 1 / Math.sqrt(Math.abs(rank - 1) + 1);
+     // Invert the rank so that lower ranks result in larger font sizes
+     // Calculate the font size based on the transformed rank
+    const fontSize = minFontSize + (maxFontSize - minFontSize) * transformedRank;
+
     return Math.min(maxFontSize, Math.max(minFontSize, fontSize));
+
   }
 
   //Based on getLabelSize() font size + 2px
   private getNodeHeight(rank: any): number {
     const fontSize = this.getLabelSize(rank);
-    return fontSize + 2;
+    return fontSize;
   }
 
   //Based on width = font size * string length * estimated average width per character 
   private getNodeWidth(label: any, rank: any): number {
-    const averageWidthPerCharacter = 0.75;
+    const averageWidthPerCharacter = 0.70;
     const fontSize = this.getLabelSize(rank) as any
     const estimatedWidth =  label.length * fontSize * averageWidthPerCharacter;
     return estimatedWidth;
@@ -273,5 +314,9 @@ export class ShowNetworkComponent implements OnInit {
     } else {
       return "#000000"
     }
+  }
+
+  private addTopGenres(data: any){
+
   }
 }

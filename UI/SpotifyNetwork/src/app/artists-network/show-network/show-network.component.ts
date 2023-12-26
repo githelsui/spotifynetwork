@@ -19,6 +19,7 @@ export class ShowNetworkComponent implements OnInit {
   Height:number=0;
   GenreColor:any=null;
   GenreLoaded:boolean=false;
+  SelectedGenre:any=null;
 
   constructor(
     private service:SharedService,
@@ -74,8 +75,8 @@ export class ShowNetworkComponent implements OnInit {
   }
 
   private setScreenDimensions(): void {
-    this.Width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-    this.Height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+      this.Width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+      this.Height = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;  
   }
 
   @HostListener('window:resize', ['$event'])
@@ -97,7 +98,9 @@ export class ShowNetworkComponent implements OnInit {
     );
   }
 
+  //Preloading data and setting scene for graph rendering
   setTimeFrame(data: string) {
+    this.setUserGenres();
     this.setScreenDimensions();
     this.resetGraph();
     this.TimeFrame = data;
@@ -122,7 +125,7 @@ export class ShowNetworkComponent implements OnInit {
         .id((d: any) => d.id)
         .distance((d: any) => this.getLinkDistance(d.weight))) 
       .force('charge', d3.forceManyBody())
-      .force('center', d3.forceCenter(this.Width / 2, this.Height / 2));
+      .force('center', d3.forceCenter(this.Width / 2.5, this.Height / 2.15));
 
     const zoom = d3
     .zoom()
@@ -316,7 +319,26 @@ export class ShowNetworkComponent implements OnInit {
     }
   }
 
-  private addTopGenres(data: any){
+  private setUserGenres(){
+    let genreSet = new Set(); // Does not accept duplicate genres
+    let topGenres = []
+    for(let artist of this.Nodes){
+      // Create a genre dict with genre: color_code
+      genreSet.add(artist.genre)
+    }
+    for(let genre of genreSet as any){
+      let genreDict = {
+        'genre': genre,
+        'color': this.GenreColor.genres[genre]
+      }
+      topGenres.push(genreDict)
+    }
+    this.TopGenres = topGenres
+    console.log(this.TopGenres)
+  }
 
+  // Receives data from legend selection child component
+  setSelectedGenre(genre: string) {
+    this.SelectedGenre = genre;
   }
 }

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-network-legend',
@@ -8,6 +8,7 @@ import { Component, Input } from '@angular/core';
 export class NetworkLegendComponent {
 
   @Input() TopGenres:any=[];
+  @Output() SelectedGenre = new EventEmitter<string>();
 
   //Development Data
   items = [
@@ -17,6 +18,6 @@ export class NetworkLegendComponent {
   ];
 
   selectGenre(genre: any){
-    
+    this.SelectedGenre.emit(genre['genre'])
   }
 }

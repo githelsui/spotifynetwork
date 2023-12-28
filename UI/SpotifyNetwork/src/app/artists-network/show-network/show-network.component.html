@@ -1,2 +1,5 @@
 <app-network-legend [TopGenres]="TopGenres" (SelectedGenre)="setSelectedGenre($event)"></app-network-legend>
+<div *ngIf="IsLoading;">
+    <app-loading></app-loading>
+</div>
 <div #graphContainer></div>

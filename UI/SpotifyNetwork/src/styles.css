@@ -6,6 +6,24 @@
     font-family: 'Roboto Mono', monospace;
 }
 
+body {
+    font-size: 16px;
+}
+  
+/* Media query for small screens */
+@media screen and (max-width: 600px) {
+  body {
+    font-size: 14px; /* Adjust the value based on your preference */
+  }
+}
+  
+/* Additional media queries for even smaller screens if needed */
+@media screen and (max-width: 400px) {
+  body {
+    font-size: 12px; /* Adjust the value based on your preference */
+  }
+}
+
 /* Define the typing animation */
 @keyframes typing {
 from {

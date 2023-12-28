@@ -5,6 +5,7 @@ import { ArtistsNetworkComponent } from './artists-network/artists-network.compo
 import { UserComponent } from './user/user.component'
 import { SignInComponent } from './user/sign-in/sign-in.component';
 import { UnauthViewComponent } from './unauth-view/unauth-view.component';
+import { LoadingComponent } from './loading/loading.component';
 
 const routes: Routes = [
   {
@@ -18,6 +19,9 @@ const routes: Routes = [
   },
   {
     path: 'unauth-view', component: UnauthViewComponent
+  },
+  {
+    path: 'dev-only', component: LoadingComponent
   }
 ];
 

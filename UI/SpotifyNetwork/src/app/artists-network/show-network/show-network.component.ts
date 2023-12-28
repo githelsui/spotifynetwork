@@ -11,7 +11,7 @@ import { SharedService } from '../../shared.service'
 export class ShowNetworkComponent implements OnInit {
   @ViewChild('graphContainer', { static: true }) graphContainer: ElementRef | undefined;
   @Input() AuthSession:any=null;
-  @Input() TimeFrame:string='recent';
+  @Input() TimeFrame:string='long_term';
   TopGenres:any=[];
 
   // Private Variables
@@ -20,58 +20,19 @@ export class ShowNetworkComponent implements OnInit {
   GenreColor:any=null;
   GenreLoaded:boolean=false;
   SelectedGenre:any=null;
+  Nodes:any=null;
+  Links:any=null;
+  IsLoading:boolean=true;
 
   constructor(
     private service:SharedService,
     private zone: NgZone,
     @Inject(PLATFORM_ID) private platformId: Object,
     ){}
-
-  //Development Data
-  Nodes:any=[
-    { id: 1, name: 'John Lennon', rank: 1, genre: 'acoustic' },
-    { id: 2, name: 'Paul McCartney', rank: 2, genre: 'acoustic' },
-    { id: 3, name: 'George Harrison', rank: 3, genre: 'acoustic' },
-    { id: 4, name: 'Ringo Starr', rank: 4, genre: 'edm' },
-    { id: 5, name: 'Bob Dylan', rank: 5, genre: 'edm' },
-    { id: 6, name: 'Alice Cooper', rank: 6, genre: 'edm' },
-    { id: 7, name: 'Charlie Parker', rank: 7, genre: 'afrobeat' },
-    { id: 8, name: 'David Bowie', rank: 8, genre: 'afrobeat' },
-    { id: 9, name: 'Eva Cassidy', rank: 9, genre: 'afrobeat' },
-    { id: 10, name: 'Frank Sinatra', rank: 10, genre: 'chill' },
-    { id: 11, name: 'Grace Jones', rank: 11, genre: 'chill' },
-    { id: 12, name: 'Henry Mancini', rank: 12, genre: 'chill' },
-    { id: 13, name: 'Ivy Queen', rank: 13, genre: 'blues' },
-    { id: 14, name: 'Jack White', rank: 14, genre: 'blues' },
-    { id: 15, name: 'Karen Carpenter', rank: 15, genre: 'disco' },
-    { id: 16, name: 'Leo Fender', rank: 16, genre: 'disco' },
-    { id: 17, name: 'Mia Martini', rank: 17, genre: 'disco' },
-    { id: 18, name: 'Nathan East', rank: 18, genre: 'folk' },
-    { id: 19, name: 'Olivia Newton-John', rank: 19, genre: 'folk' },
-    { id: 20, name: 'Peter Gabriel', rank: 20, genre: 'folk' },
-  ];
-  Links:any=[  { source: 1, target: 2, weight: 1.5 },
-    { source: 2, target: 3, weight: 2.0 },
-    { source: 3, target: 4, weight: 1.8 },
-    { source: 4, target: 5, weight: 1.2 },
-    { source: 5, target: 6, weight: 2.5 },
-    { source: 6, target: 7, weight: 1.0 },
-    { source: 7, target: 8, weight: 1.7 },
-    { source: 8, target: 9, weight: 2.3 },
-    { source: 9, target: 10, weight: 1.6 },
-    { source: 10, target: 11, weight: 1.9 },
-    { source: 11, target: 12, weight: 2.2 },
-    { source: 12, target: 13, weight: 1.3 },
-    { source: 13, target: 14, weight: 1.1 },
-    { source: 14, target: 15, weight: 1.4 },
-    { source: 15, target: 16, weight: 1.8 },
-    { source: 16, target: 17, weight: 2.1 },
-    { source: 17, target: 18, weight: 1.7 },
-    { source: 18, target: 19, weight: 2.0 },
-    { source: 19, target: 20, weight: 1.5 },];
    
   ngOnInit(): void {
-    this.initGraph();
+    //Load network data
+    this.loadData();
   }
 
   private setScreenDimensions(): void {
@@ -84,12 +45,27 @@ export class ShowNetworkComponent implements OnInit {
     this.setScreenDimensions();
   }
 
-  initGraph(): void {
+  loadData():void {
+    var payload = {
+      'session_id': this.AuthSession['SessionId'],
+      'timeframe': this.TimeFrame
+    }
+    this.service.getNetwork(payload).subscribe(data=>{
+      console.log(data)
+      const graph = (data as any).item;
+      this.Nodes = (graph as any).Nodes;
+      this.Links = (graph as any).Links;
+      this.renderGraph();
+      this.renderLegend();
+    })
+  }
+
+  renderLegend(): void {
     this.service.getGenreColor().subscribe(
       (data) => {
         this.GenreColor = data;
         this.GenreLoaded = true;
-        this.setTimeFrame(this.TimeFrame);
+        this.setUserGenres();
       },
       (error) => {
         console.error('Error loading data:', error);
@@ -99,12 +75,16 @@ export class ShowNetworkComponent implements OnInit {
   }
 
   //Preloading data and setting scene for graph rendering
-  setTimeFrame(data: string) {
-    this.setUserGenres();
-    this.setScreenDimensions();
+  renderGraph():void {
     this.resetGraph();
-    this.TimeFrame = data;
+    this.setScreenDimensions();
     this.createForceDirectedGraph();
+  }
+
+  setTimeFrame(data: any):void {
+    this.TimeFrame = data;
+    this.resetGraph();
+    this.loadData();
   }
 
   private resetGraph(): void {
@@ -212,11 +192,11 @@ export class ShowNetworkComponent implements OnInit {
     function handleNodeClick(event: any, artist: any) {
       const content = `<div class="d-flex justify-content-center align-items-center">
       <div class="d-flex flex-column">
-          <img src='https://github.com/holtzy/D3-graph-gallery/blob/master/img/section/ArcSmal.png?raw=true'>
+          <img src="${artist.image}" width="300" height="300">
           <h4>&gt; ${artist.name}</h4>
           <h6>Rank: ${artist.rank}</h6>
           <h6>Genres: ${artist.genre}</h6>
-          <h6>Followers: 100</h6>
+          <h6>Popularity:  ${artist.popularity}</h6>
           <h6>Most Similar: neighbors</h6>
       </div>
       </div>`
@@ -231,7 +211,7 @@ export class ShowNetworkComponent implements OnInit {
     function handleLinkClick(event: any, link: any) {
       const content = `<div class="d-flex justify-content-center align-items-center">
       <div class="d-flex flex-column">
-          <h5>${link.source} and ${link.target}</h5>
+          <h5>${link.source_name} and ${link.target_name}</h5>
           <h5>&gt; Similarity Score: ${link.weight}</h5>
       </div>
       </div>`
@@ -273,10 +253,21 @@ export class ShowNetworkComponent implements OnInit {
       event.subject.fx = null;
       event.subject.fy = null;
     }
+
+    this.IsLoading = false;
   }
 
   private getLinkDistance(weight: any): number {
-    return 450 * weight;
+    // const avgDistance = (this.Width + this.Height) / 2;
+    const maxLinkDistance = Math.min(this.Width, this.Height);
+    const minNodeWeight = 1;
+    const maxNodeWeight = 20;
+    // Normalize node weight between 0 and 1
+    const normalizedWeight = (weight) / (maxNodeWeight - minNodeWeight);
+    // Calculate link distance based on normalized weight
+    const linkDistance = normalizedWeight * maxLinkDistance;
+    // return (this.Height / weight);
+    return linkDistance;
   }
 
   // Based on artist.rank

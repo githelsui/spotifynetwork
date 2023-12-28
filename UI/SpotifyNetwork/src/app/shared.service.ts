@@ -34,22 +34,8 @@ export class SharedService {
     return this.http.get(this.genresUrl);
   }
 
-  // TODO: Artists
-  getTopArtists():Observable<any[]>{
-    return this.http.get<any[]>(this.APIUrl + '/artists/');
+  //Network
+  getNetwork(val:any):Observable<any[]>{
+    return this.http.post<any[]>(this.APIUrl + 'api/get-network', val);
   }
-
-  // Artist Associations
-  addArtistAssoc(val:any){
-    return this.http.post<any[]>(this.APIUrl + '/artistassocs/', val);
-  }  
-
-  getSimilarArtists():Observable<any[]>{
-    return this.http.get<any[]>(this.APIUrl + '/artistassocs/');
-  }
-
-  getArtistNetwork():Observable<any[]>{
-    return this.http.get<any[]>(this.APIUrl + '/artistassocs/');
-  }
-
 }

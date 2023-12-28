@@ -37,3 +37,31 @@
     width: 16px;
     height: 16px;
   }
+
+/* Media query for small screens */
+@media screen and (max-width: 600px) {
+  .legend-label {
+    font-size: 12px; /* Adjust the value based on your preference */
+    padding: 0px;
+    margin-bottom: 0px;
+  }
+
+  .color {
+    width: 12px;
+    height: 12px;
+  }
+}
+  
+/* Additional media queries for even smaller screens if needed */
+@media screen and (max-width: 400px) {
+  .legend-label {
+    font-size: 12px; /* Adjust the value based on your preference */
+    padding: 0px;
+    margin-bottom: 0px;
+  }
+
+  .color {
+    width: 12px;
+    height: 12px;
+  }
+}

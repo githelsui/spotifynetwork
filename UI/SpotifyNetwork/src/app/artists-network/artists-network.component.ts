@@ -25,7 +25,7 @@ export class ArtistsNetworkComponent implements OnInit{
   MainUrl:string="/artists-network";
   UnauthUrl:string="/unauth-view";
   AuthSession:any=null;
-  SelectedTimeFrame:string="recent";
+  SelectedTimeFrame:string="long_term";
   AccountSelected:boolean=false;
   UserName:string="";
   
@@ -43,6 +43,7 @@ export class ArtistsNetworkComponent implements OnInit{
     }
   }
 
+  //Receives data from network-sidebar child component
   setTimeFrame(data: string) {
     this.SelectedTimeFrame = data;
     if (this.graphView) {
@@ -50,6 +51,7 @@ export class ArtistsNetworkComponent implements OnInit{
     }
   }
 
+  //Receives data from network-sidebar child component
   setAccountView(data: boolean) {
     this.AccountSelected = data;
     if(this.AccountSelected) {

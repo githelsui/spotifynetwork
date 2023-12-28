@@ -26,7 +26,6 @@ class NetworkService:
         artistsDAO = []
         artistsAPI = []
         for artist in data:
-            print(artist['name'])
             artistDao = {
                 'ArtistId': artist['id'],
                 'ArtistName': artist['name'],
@@ -48,6 +47,7 @@ class NetworkService:
                 'popularity': artist['popularity'],
                 'genre': genre,
                 'genres': artist['genres'],
+                'image': artist['image'],
                 'rank': artist['rank'],
             }
             artistsAPI.append(artistAPI)
@@ -58,13 +58,15 @@ class NetworkService:
         links = []
         for source_node in self.nodesDAO:
             for target_node in self.nodesDAO:
-                if source_node != target_node: 
+                if source_node['ArtistId'] != target_node['ArtistId']: 
                     #get node connections and their weights
                     weight = self.get_weight(target_node, source_node)
                     if weight > 0:
                         link = {
                             'source': source_node['ArtistId'],
                             'target': target_node['ArtistId'],
+                            'source_name': source_node['ArtistName'],
+                            'target_name': target_node['ArtistName'],
                             'weight': weight
                         }
                         links.append(link)

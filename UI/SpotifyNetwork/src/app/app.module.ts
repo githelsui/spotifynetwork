@@ -14,6 +14,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NetworkSidebarComponent } from './artists-network/network-sidebar/network-sidebar.component';
 import { NetworkLegendComponent } from './artists-network/show-network/network-legend/network-legend.component';
+import { LoadingComponent } from './loading/loading.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { NetworkLegendComponent } from './artists-network/show-network/network-l
     ShowNetworkComponent,
     UnauthViewComponent,
     NetworkSidebarComponent,
-    NetworkLegendComponent
+    NetworkLegendComponent,
+    LoadingComponent
   ],
   imports: [
     BrowserModule,

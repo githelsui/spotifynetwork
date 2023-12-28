@@ -48,3 +48,27 @@
     background-color: #000000;
     color: white;
   }
+
+/* Media query for small screens */
+@media screen and (max-width: 600px) {
+  .profile-button {
+    font-size: 20px;
+  }
+
+  .text-button {
+    font-size: 12px; /* Adjust the value based on your preference */
+    margin-bottom: 1px;
+  }
+}
+  
+/* Additional media queries for even smaller screens if needed */
+@media screen and (max-width: 400px) {
+  .profile-button {
+    font-size: 16px;
+  }
+
+  .text-button {
+    font-size: 10px; /* Adjust the value based on your preference */
+    margin-bottom: 1px;
+  }
+}

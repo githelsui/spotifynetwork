@@ -4,8 +4,8 @@ from django.utils import timezone
 from requests import Request, post, get
 from .credentials import CLIENT_ID, CLIENT_SECRET
 
+# -- Authentication / Authorization Core Component Feature --
 # Handling tokens from Spotify API
-
 def get_user_tokens(session_id):
     print("session id in get_user_tokens = " + str(session_id))
     user_tokens = SpotifyToken.objects.filter(user=session_id)
@@ -75,10 +75,7 @@ def get_spotify_account(session_id):
     item = None
     
     access_token = get_access_token(session_id)
-    auth_token = "Bearer " + access_token
-    headers = {
-            'Authorization': auth_token,
-    }
+    headers = {'Authorization': 'Bearer ' + access_token}
         
     response = get('https://api.spotify.com/v1/me', headers=headers).json()
    
@@ -95,4 +92,69 @@ def get_spotify_account(session_id):
         status = True
     result = {'status': status, 'item': item}
     return result
-        
+
+# -- Artist Network Feature -- 
+def get_user_top_artists(session_id, timeframe):
+    status = None 
+    item = None
+    
+    access_token = get_access_token(session_id)
+    headers = {'Authorization': 'Bearer ' + access_token}
+    
+    url = 'https://api.spotify.com/v1/me/top/artists?limit=30&time_range=' + timeframe
+    response = get(url, headers=headers).json()
+   
+    if 'error' in response: #API returned an error
+        status = False 
+    else:
+        items = response.get('items')
+        artists = []
+        rank = 1
+        for artist in items:
+            artObj = {
+                'id': artist['id'],
+                'name': artist['name'],
+                'popularity': artist['popularity'],
+                'genres': artist['genres'],
+                'rank': rank,
+                'image': artist['images'][0]['url'],
+            }
+            artists.append(artObj)
+            rank += 1
+        item = artists
+        print(item)
+        status = True
+    result = {'status': status, 'item': item}
+    return result
+
+def get_related_artists(session_id, artist_id):
+    status = None 
+    item = None
+    
+    access_token = get_access_token(session_id)
+    headers = {'Authorization': 'Bearer ' + access_token}
+    
+    url = 'https://api.spotify.com/v1/artists/' + artist_id + '/related-artists'
+    response = get(url, headers=headers).json()
+    if 'error' in response: #API returned an error
+        status = False 
+    else:
+        print(response)
+        neighbors = []
+        related_artists = response['artists']
+        relatability_score = len(related_artists)
+        for artist in related_artists:
+            artObj = {
+                'id': artist['id'],
+                'name': artist['name'],
+                'popularity': artist['popularity'],
+                'genres': artist['genres'],
+                'image': artist['images'][0]['url'],
+                'relatability_score': relatability_score
+            }
+            neighbors.append(artObj)
+            relatability_score -= 1
+        item = neighbors
+        status = True 
+    result = {'status': status, 'item': item}
+    return result

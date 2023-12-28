@@ -5,3 +5,36 @@
     font-family: 'Mulish', sans-serif;
     font-family: 'Roboto Mono', monospace;
 }
+
+/* Define the typing animation */
+@keyframes typing {
+from {
+    width: 0; /* Start with zero width */
+}
+to {
+    width: 100%; /* End with full width */
+    }
+}
+
+/* Define the blinking border animation */
+@keyframes blink {
+    50% {
+      border-color: transparent;
+    }
+}
+
+/* Apply the typing animation to the text element */
+.typing-text {
+overflow: hidden; /* Hide overflow text */
+white-space: nowrap; /* Prevent line breaks */
+animation: typing 3s steps(40) infinite; /* Adjust duration and steps as needed */
+}
+
+/* Apply the typewriter animation to the text element */
+.typewriter-text {
+overflow: hidden;
+white-space: nowrap;
+animation: typing 4s steps(40) 1s forwards,
+            blink 1s step-end infinite;
+border-right: 2px solid; /* Add a cursor effect */
+}

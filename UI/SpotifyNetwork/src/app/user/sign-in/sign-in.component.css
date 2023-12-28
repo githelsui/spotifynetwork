@@ -1,0 +1,10 @@
+.sign-in-button {
+    padding: 10px;
+    border: 0px;
+    transition: background-color 0.3s ease;
+}
+
+.sign-in-button:hover {
+    background-color: black;
+    color:white;
+}

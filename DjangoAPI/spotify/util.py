@@ -7,7 +7,6 @@ from .credentials import CLIENT_ID, CLIENT_SECRET
 # -- Authentication / Authorization Core Component Feature --
 # Handling tokens from Spotify API
 def get_user_tokens(session_id):
-    print("session id in get_user_tokens = " + str(session_id))
     user_tokens = SpotifyToken.objects.filter(user=session_id)
     if user_tokens.exists():
         return user_tokens[0]
@@ -122,7 +121,6 @@ def get_user_top_artists(session_id, timeframe):
             artists.append(artObj)
             rank += 1
         item = artists
-        print(item)
         status = True
     result = {'status': status, 'item': item}
     return result
@@ -139,7 +137,6 @@ def get_related_artists(session_id, artist_id):
     if 'error' in response: #API returned an error
         status = False 
     else:
-        print(response)
         neighbors = []
         related_artists = response['artists']
         relatability_score = len(related_artists)
@@ -149,7 +146,6 @@ def get_related_artists(session_id, artist_id):
                 'name': artist['name'],
                 'popularity': artist['popularity'],
                 'genres': artist['genres'],
-                'image': artist['images'][0]['url'],
                 'relatability_score': relatability_score
             }
             neighbors.append(artObj)

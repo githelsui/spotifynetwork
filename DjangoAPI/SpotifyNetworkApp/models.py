@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
 
@@ -10,9 +11,10 @@ class Users(models.Model):
 class Artists(models.Model):
     ArtistId = models.AutoField(primary_key=True)
     ArtistName = models.CharField(max_length=100)
-    ArtistFollowers = models.IntegerField()
-    ArtistGenre = models.CharField(max_length=100)
+    ArtistPopularity = models.IntegerField()
+    ArtistGenre = models.JSONField()
     ArtistRank = models.IntegerField() # -1 if not in User's Top Artist
+    ArtistImage = models.CharField(max_length=100)
     SimilarArtists = models.JSONField() # list of similar artist's unique ids
     
 class ArtistAssocs(models.Model): # maybe associate this with a specific UserId

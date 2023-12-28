@@ -5,6 +5,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from.user_manager import UserManager
+from.network_manager import NetworkManager
 from SpotifyNetworkApp.models import Users, Artists, ArtistAssocs
 from SpotifyNetworkApp.serializers import UsersSerializer, ArtistsSerializer, ArtistAssocsSerializer
 import json
@@ -24,16 +25,17 @@ class UserSignIn(APIView):
         data = json.loads(request.body)
         session_id = data['session_id']
         response = self.UserManager.sign_in(session_id)
-        user = response['item']
         if not response['status']:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
+            user = response['item']
             return Response({'item': user}, status=status.HTTP_200_OK)
         
 class ArtistNetwork(APIView):
     
-      # init method or constructor
+    # init method or constructor
     def __init__(self):
+        self.NetworkManager = NetworkManager()
          # TODO: Initialize Logger object for View Layer
         self.Logger = ''
         
@@ -42,16 +44,9 @@ class ArtistNetwork(APIView):
         data = json.loads(request.body)
         session_id = data['session_id']
         timeframe = data['timeframe']
-        # PRODUCTION: 
-            # -> uses NetworkManager class 
-        # DEVELOPMENT ONLY
-        response = get_user_top_artists(session_id, timeframe)
-        item = response['item']
-        artist_temp = item[0]
-        artist_id = artist_temp['id']
-        response2 = get_related_artists(session_id, artist_id)
-        item = response2['item']
+        response = self.NetworkManager.get_network(session_id, timeframe)
         if not response['status']:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
+            item = response['item']
             return Response({'item': item}, status=status.HTTP_200_OK)

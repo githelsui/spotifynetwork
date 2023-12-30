@@ -7,11 +7,13 @@ from django.http import HttpResponseRedirect, HttpResponse
 from rest_framework_simplejwt.tokens import RefreshToken
 from spotify.util import get_user_top_artists, get_related_artists 
 from .network_service import NetworkService
+from .network_dao import NetworkDAO
 import json
 
 class NetworkManager:
     def __init__(self):
         self.NetworkService = NetworkService()
+        self.NetworkDAO = NetworkDAO()
          # TODO: Initialize Logger object for Manager Layer
         self.Logger = ''
     
@@ -38,13 +40,19 @@ class NetworkManager:
         status = response1['status']
         if status:
             item = response1['item']
+            # Get related artists
             for artist in item:
                 artist_id = artist['id']
-                response2 = get_related_artists(session_id, artist_id)
-                status = response2['status']
-                if not status:
-                    break
-                artist['similar_artists'] = response2['item']
+                exists_db = self.NetworkDAO.artist_exists(artist_id)
+                if not exists_db:
+                    response2 = get_related_artists(session_id, artist_id)
+                    status = response2['status']
+                    if not status: #Error from Spotifyapi call -> return false status for entire function
+                        break
+                    artist['similar_artists'] = response2['item']
+                else:
+                    artist_db = self.NetworkDAO.get_artist(artist_id)
+                    artist['similar_artists'] = artist_db.SimilarArtists
         else:
             status = False 
         result = {'status': status, 'item': item}

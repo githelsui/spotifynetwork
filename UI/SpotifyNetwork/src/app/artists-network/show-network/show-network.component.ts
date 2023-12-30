@@ -46,6 +46,7 @@ export class ShowNetworkComponent implements OnInit {
 
   loadData():void {
     this.IsLoading = true;
+    console.log(this.AuthSession)
     var payload = {
       'session_id': this.AuthSession['SessionId'],
       'timeframe': this.TimeFrame

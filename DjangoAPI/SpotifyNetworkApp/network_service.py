@@ -31,11 +31,11 @@ class NetworkService:
                 'ArtistName': artist['name'],
                 'ArtistPopularity': artist['popularity'],
                 'ArtistGenre': [] if (len(artist['genres']) == 0 or artist['genres'][0] == 'None') else artist['genres'],
-                'ArtistRank': artist['rank'],
                 'ArtistImage': artist['image'],
                 'SimilarArtists': artist['similar_artists']
             }
             artistsDAO.append(artistDao)
+            self.NetworkDAO.save_artist(artistDao)
             artistAPI = {
                 'id': artist['id'],
                 'name': artist['name'],

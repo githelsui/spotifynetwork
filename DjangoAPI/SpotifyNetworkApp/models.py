@@ -9,7 +9,7 @@ class Users(models.Model):
     UserName = models.CharField(max_length=100)
     
 class Artists(models.Model):
-    ArtistId = models.AutoField(primary_key=True)
+    ArtistId = models.CharField(max_length=100, primary_key=True)
     ArtistName = models.CharField(max_length=100)
     ArtistPopularity = models.IntegerField()
     ArtistGenre = models.JSONField()

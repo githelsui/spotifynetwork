@@ -18,7 +18,6 @@ export class ShowNetworkComponent implements OnInit {
   Width:number=0;
   Height:number=0;
   GenreColor:any=null;
-  GenreLoaded:boolean=false;
   SelectedGenre:any=null;
   Nodes:any=null;
   Links:any=null;
@@ -46,6 +45,7 @@ export class ShowNetworkComponent implements OnInit {
   }
 
   loadData():void {
+    this.IsLoading = true;
     var payload = {
       'session_id': this.AuthSession['SessionId'],
       'timeframe': this.TimeFrame
@@ -55,21 +55,19 @@ export class ShowNetworkComponent implements OnInit {
       const graph = (data as any).item;
       this.Nodes = (graph as any).Nodes;
       this.Links = (graph as any).Links;
-      this.renderGraph();
-      this.renderLegend();
+      this.renderContainer();
     })
   }
 
-  renderLegend(): void {
+  renderContainer(): void {
     this.service.getGenreColor().subscribe(
       (data) => {
-        this.GenreColor = data;
-        this.GenreLoaded = true;
+        this.GenreColor = (data as any).modern_colors;
         this.setUserGenres();
+        this.renderGraph();
       },
       (error) => {
         console.error('Error loading data:', error);
-        this.GenreLoaded = false;
       }
     );
   }
@@ -209,6 +207,10 @@ export class ShowNetworkComponent implements OnInit {
     }
 
     function handleLinkClick(event: any, link: any) {
+    //   var genres = ""
+    //   for (var i = 0; i < link.genres.length; i++) {
+    //     genres += "<p>" + genres[i] + "</p>";
+    // } 
       const content = `<div class="d-flex justify-content-center align-items-center">
       <div class="d-flex flex-column">
           <h5>${link.source_name} and ${link.target_name}</h5>
@@ -265,7 +267,7 @@ export class ShowNetworkComponent implements OnInit {
     // Normalize node weight between 0 and 1
     const normalizedWeight = (weight) / (maxNodeWeight - minNodeWeight);
     // Calculate link distance based on normalized weight
-    const linkDistance = normalizedWeight * maxLinkDistance;
+    const linkDistance = (normalizedWeight * 0.86) * maxLinkDistance;
     // return (this.Height / weight);
     return linkDistance;
   }
@@ -301,8 +303,8 @@ export class ShowNetworkComponent implements OnInit {
   }
 
   private getNodeColor(genre: any){
-    if(this.GenreColor != null){
-      const color = this.GenreColor.genres[genre]
+    if(this.TopGenres != null){
+      const color = this.TopGenres[genre]
       console.log(color)
       return color
     } else {
@@ -312,17 +314,15 @@ export class ShowNetworkComponent implements OnInit {
 
   private setUserGenres(){
     let genreSet = new Set(); // Does not accept duplicate genres
-    let topGenres = []
+    let topGenres = {}
     for(let artist of this.Nodes){
       // Create a genre dict with genre: color_code
       genreSet.add(artist.genre)
     }
+    var i = 0;
     for(let genre of genreSet as any){
-      let genreDict = {
-        'genre': genre,
-        'color': this.GenreColor.genres[genre]
-      }
-      topGenres.push(genreDict)
+      (topGenres as any)[genre]= this.GenreColor[i]
+      i++;
     }
     this.TopGenres = topGenres
     console.log(this.TopGenres)

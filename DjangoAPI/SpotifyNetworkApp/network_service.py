@@ -30,23 +30,18 @@ class NetworkService:
                 'ArtistId': artist['id'],
                 'ArtistName': artist['name'],
                 'ArtistPopularity': artist['popularity'],
-                'ArtistGenre': artist['genres'],
+                'ArtistGenre': [] if (len(artist['genres']) == 0 or artist['genres'][0] == 'None') else artist['genres'],
                 'ArtistRank': artist['rank'],
                 'ArtistImage': artist['image'],
                 'SimilarArtists': artist['similar_artists']
             }
             artistsDAO.append(artistDao)
-            genre = ""
-            if len(artist['genres']) == 0:
-                genre = "N/A"
-            else:
-                genre = artist['genres'][0]
             artistAPI = {
                 'id': artist['id'],
                 'name': artist['name'],
                 'popularity': artist['popularity'],
-                'genre': genre,
-                'genres': artist['genres'],
+                'genre': "N/A" if (len(artist['genres']) == 0 or artist['genres'][0] == 'None') else artist['genres'][0],
+                'genres': artistDao['ArtistGenre'],
                 'image': artist['image'],
                 'rank': artist['rank'],
             }
@@ -62,15 +57,36 @@ class NetworkService:
                     #get node connections and their weights
                     weight = self.get_weight(target_node, source_node)
                     if weight > 0:
+                        # TODO: Shared genres between two artists
+                        # genres1 = source_node['ArtistGenre']
+                        # genres2 = target_node['ArtistGenre']
+                        # # print("\ngenres 1:")
+                        # print(genres1)
+                        # print("\ngenres 2:")
+                        # print(genres2)
+                        # genres1.extend(genres2)
+                        # print("\nshared genres:")
+                        # print(genres1)
+                        # shared_genres = set(genres1)
+                        # print("\set genres:")
+                        # print(shared_genres)
                         link = {
                             'source': source_node['ArtistId'],
                             'target': target_node['ArtistId'],
                             'source_name': source_node['ArtistName'],
                             'target_name': target_node['ArtistName'],
-                            'weight': weight
+                            'weight': weight,
+                            # 'genres': shared_genres
                         }
                         links.append(link)
+                        # update artist node with new neighbor
+                        
         return links
+    
+    def get_neighbors(self):
+        for artist in self.nodes:
+            artist_id = artist['id']
+            
     
     def get_weight(self, artist1, artist2):
         weight = 0

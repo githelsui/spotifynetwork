@@ -20,4 +20,8 @@ export class NetworkLegendComponent {
   selectGenre(genre: any){
     this.SelectedGenre.emit(genre['genre'])
   }
+  
+  getObjectKeys(obj: object): string[] {
+    return Object.keys(obj);
+  }
 }

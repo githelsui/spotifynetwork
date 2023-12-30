@@ -8,7 +8,7 @@ import {Observable} from 'rxjs';
 export class SharedService {
 
   // Internal assets
-  private genresUrl = 'assets/genres.json';
+  private genresUrl = 'assets/colors.json';
 
   //Access to our Web API -> Backend 
   readonly APIUrl = "http://127.0.0.1:8000/";

@@ -1,13 +1,13 @@
 <div class="overlay-container">
   <div class="overlay-buttons">
-    <div *ngFor="let item of this.TopGenres" class="row justify-content-end align-items-center mb-2">
+    <div *ngFor="let key of getObjectKeys(this.TopGenres)" class="row justify-content-end align-items-center mb-2">
       <div class="col-12 col-sm-6 col-md-8">
-        <button class="legend-label" (click)="selectGenre(item)">
-          {{ item.genre }}
+        <button class="legend-label" (click)="selectGenre(key)">
+          {{ key }}
         </button>
       </div>
       <div class="col-2 col-md-4">
-        <div class="color" [style.background-color]="item.color"></div>
+        <div class="color" [style.background-color]="this.TopGenres[key]"></div>
       </div>
     </div>
   </div>

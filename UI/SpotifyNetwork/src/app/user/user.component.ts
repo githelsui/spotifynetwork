@@ -1,4 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { SharedService } from '../shared.service'
+import { AuthService } from '../auth.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-user',
@@ -11,8 +14,15 @@ export class UserComponent {
   @Input() isVisible = false;
   @Output() CloseModal = new EventEmitter<boolean>();
 
-  logout():void{
+  constructor(
+    private router: Router, 
+    private service:SharedService,
+    private authService: AuthService
+    ){}
 
+  logout():void{
+    this.authService.clearAuthorization();
+    this.router.navigateByUrl("/", { replaceUrl: true });
   }
 
   closeModal():void {

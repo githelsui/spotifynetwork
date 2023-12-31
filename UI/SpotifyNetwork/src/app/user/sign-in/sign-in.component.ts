@@ -22,6 +22,7 @@ export class SignInComponent implements OnInit {
   IsAuthenticated:boolean=false;
   LoginLink:string="";
   AuthToken:string="";
+  AuthSession:any=null;
 
   ngOnInit(): void {
       this.getSession();
@@ -39,6 +40,17 @@ export class SignInComponent implements OnInit {
           this.loginUser();
         } 
       })
+    } 
+    else // session already exists,  never logged out
+    {
+      this.sessionExists();
+    }
+  }
+
+  sessionExists():void{
+    this.AuthSession = this.authService.getAuthorization();
+    if(this.AuthSession){
+      this.router.navigateByUrl("/artists-network", { replaceUrl: true });
     }
   }
 
@@ -64,7 +76,6 @@ export class SignInComponent implements OnInit {
     var payload = {
       'session_id': this.AuthToken
     }
-    console.log('token: ' + this.AuthToken)
     this.service.signInUser(payload).subscribe(data=>{
       var user = (data as any).item;
       const authSession = { 

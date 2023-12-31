@@ -20,6 +20,10 @@ export class SharedService {
     return this.http.post<any[]>(this.APIUrl + 'api/sign-in', val);
   }
 
+  // logoutUser(val:any):Observable<any[]>{
+  //   return this.http.post<any[]>(this.APIUrl + 'api/logout', val);
+  // }
+
   // Spotify API
   getSpotifyAuthSignIn():Observable<any[]>{
     return this.http.get<any[]>(this.APIUrl + 'spotify/get-auth-url');

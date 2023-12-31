@@ -14,9 +14,6 @@ const routes: Routes = [
     path: 'artists-network', component: ArtistsNetworkComponent
   },
   {
-    path: 'user', component: UserComponent
-  },
-  {
     path: 'unauth-view', component: UnauthViewComponent
   }
 ];

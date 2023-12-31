@@ -28,6 +28,7 @@ export class ArtistsNetworkComponent implements OnInit{
   SelectedTimeFrame:string="long_term";
   AccountSelected:boolean=false;
   UserName:string="";
+  isModalVisible:boolean=false;
   
   ngOnInit(): void {
     this.checkIfAuthenticated();
@@ -46,16 +47,22 @@ export class ArtistsNetworkComponent implements OnInit{
   //Receives data from network-sidebar child component
   setTimeFrame(data: string) {
     this.SelectedTimeFrame = data;
+    this.AccountSelected = false;
     if (this.graphView) {
       this.graphView.setTimeFrame(this.SelectedTimeFrame);
     }
   }
 
-  //Receives data from network-sidebar child component
+  //Opens modal
   setAccountView(data: boolean) {
     this.AccountSelected = data;
     if(this.AccountSelected) {
-      this.router.navigateByUrl("/unauth-view", { replaceUrl: true });
+      this.isModalVisible = true;
     }
   }
+
+  closeModalEvent(data: any) {
+    this.isModalVisible = data;
+  }
+  
 }

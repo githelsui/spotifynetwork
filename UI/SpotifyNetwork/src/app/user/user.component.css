@@ -1,0 +1,53 @@
+/* modal.component.css */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modal-container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+  }
+  
+  .modal-body {
+    padding-top: 20px;
+  }
+  
+.modal-button {
+  font-size: 20px;
+  margin: 10px;
+  /* padding: 25px; */
+  padding: 10px 30px 10px 30px;
+  border: 0px;
+  transition: background-color 0.3s ease;
+}
+
+.modal-logout-button {
+  padding: 10px;
+  border: 0px;
+  transition: background-color 0.3s ease;
+  background-color: #282222 !important;
+}
+
+.modal-button:hover {
+    background-color: black;
+    color:white;
+}

@@ -1,8 +1,9 @@
 <div class="container-fluid">
   <app-network-sidebar [AuthSession]="AuthSession" [UserName]="UserName" (TimeFrame)="setTimeFrame($event)" (AccountSelected)="setAccountView($event)"></app-network-sidebar>
   <div class="vh-100 d-flex justify-content-center align-items-center">
-      <div class="d-flex flex-column">
-          <app-show-network [AuthSession]="AuthSession" [TimeFrame]="SelectedTimeFrame"></app-show-network>
-      </div>
+    <div class="d-flex flex-column">
+      <app-show-network [AuthSession]="AuthSession" [TimeFrame]="SelectedTimeFrame"></app-show-network>
+    </div>
   </div>
+  <app-user [isVisible]="isModalVisible" [AuthSession]="AuthSession" [UserName]="UserName" (CloseModal)="closeModalEvent($event)"></app-user>
 </div>

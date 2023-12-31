@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-user',
@@ -6,5 +6,16 @@ import { Component } from '@angular/core';
   styleUrl: './user.component.css'
 })
 export class UserComponent {
+  @Input() AuthSession:any=null;
+  @Input() UserName:any="";
+  @Input() isVisible = false;
+  @Output() CloseModal = new EventEmitter<boolean>();
 
+  logout():void{
+
+  }
+
+  closeModal():void {
+    this.CloseModal.emit(false);
+  }
 }

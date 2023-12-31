@@ -32,6 +32,7 @@ export class ShowNetworkComponent implements OnInit {
   ngOnInit(): void {
     //Load network data
     if(this.AuthSession) {
+      console.log('timeframe: ' + this.TimeFrame)
       this.loadData();
     }
   }
@@ -113,6 +114,7 @@ export class ShowNetworkComponent implements OnInit {
     .scaleExtent([0.5, 10]) // Set the scale extent as needed
     .on('zoom', (event) => handleZoom(event));
     svg.call(zoom as any)
+
 
     const link = svg.selectAll('line')
       .data(this.Links)
@@ -250,11 +252,10 @@ export class ShowNetworkComponent implements OnInit {
     }
 
     function handleZoom(event: any) {
-      const transform = event.transform;
       // Update the positions of nodes based on the zoom transformation
-      node.attr("transform", transform);
-      link.attr("transform", transform);
-      labels.attr("transform", transform);
+      node.attr("transform", event.transform);
+      link.attr("transform", event.transform);
+      labels.attr("transform", event.transform);
     }
 
     function dragstarted(event: any){

@@ -11,21 +11,23 @@ import json
 class NetworkService:
     def __init__(self):
         self.NetworkDAO = NetworkDAO()
-        self.nodes = [] #data to be sent to client via our web api
+        self.nodes = [] 
+        self.nodesAPI = [] #data to be sent to client via our web api
         self.nodesDAO = [] #data to be saved to DAO
         self.links = []
         self.link_pairs = set() #unique pairs only
     
     def get_graph(self, data):
         # get nodes
-        self.nodes = self.get_nodes(data)
+        self.get_nodes(data)
         # get links
         self.get_links(data)
-        return {'Nodes': self.nodes, 'Links': self.links}
+        # get neighbors per node based on updated links
+        self.get_neighbors()
+        return {'Nodes': self.nodesAPI, 'Links': self.links}
         
     def get_nodes(self, data):
         artistsDAO = []
-        artistsAPI = []
         for artist in data:
             artistDao = {
                 'ArtistId': artist['id'],
@@ -46,9 +48,8 @@ class NetworkService:
                 'image': artist['image'],
                 'rank': artist['rank'],
             }
-            artistsAPI.append(artistAPI)
+            self.nodes.append(artistAPI)
         self.nodesDAO = artistsDAO
-        return artistsAPI
         
     def get_links(self, data):
         for source_node in self.nodesDAO:
@@ -64,7 +65,25 @@ class NetworkService:
                         self.link_pairs.add(primary_key)
                     else:
                         self.create_link(source_node, target_node)
-    
+                        
+    def get_neighbors(self):
+        self.nodesAPI = [
+        {**artist, 'neighbors': self.find_neighbors(artist['id'])}
+        for artist in self.nodes
+    ]
+            
+    def find_neighbors(self, artist_id):
+        # Find neighbors for a specific artist ID
+        neighbors = []
+        for link in self.links:
+            source_id = link['source']
+            target_id = link['target']
+            if artist_id == source_id:
+                neighbors.append(link['target_name'])
+            elif artist_id == target_id:
+                neighbors.append(link['source_name'])
+        return neighbors
+        
     def is_unique_link(self, source, target):
         source_id = source['ArtistId']
         target_id = target['ArtistId']

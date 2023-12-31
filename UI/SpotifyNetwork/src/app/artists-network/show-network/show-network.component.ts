@@ -167,7 +167,7 @@ export class ShowNetworkComponent implements OnInit {
     // create a tooltip
     var tooltip = d3.select((this.graphContainer as any).nativeElement)
     .append("div")
-    .attr('height', 50)
+    .attr('height', 45)
     .style("position", "absolute")
     .style("visibility", "hidden")
     .style("background-color", "white")
@@ -195,7 +195,7 @@ export class ShowNetworkComponent implements OnInit {
     //hover
     function handleNodeClick(event: any, artist: any) {
       var genres = getGenreList(artist)
-
+      var neighbors = getNeighborList(artist)
       const content = `<div class="artist-container">
       <div class="d-flex flex-column">
           <img src="${artist.image}" width="300" height="300">
@@ -203,7 +203,7 @@ export class ShowNetworkComponent implements OnInit {
           <h6>Rank: ${artist.rank}</h6>
           <h6>Genres: ${genres}</h6>
           <h6>Popularity:  ${artist.popularity}</h6>
-          <h6>Most Similar: neighbors</h6>
+          <h6>Most Similar: <br>${neighbors}</h6>
       </div>
       </div>`
 
@@ -239,16 +239,27 @@ export class ShowNetworkComponent implements OnInit {
     }
 
     function getGenreList(data: any){
-      var genres = ""
-      for (var i = 0; i < data.genres.length; i++) {
-        if(i == data.genres.length-1)
-          genres += data.genres[i];
-        else if(i % 2 == 0)
-        genres += "<br>" + data.genres[i] + ", ";
-        else 
-          genres += data.genres[i] + ", ";
-      } 
-      return genres
+      return data.genres.map((genres: any, index: any) => {
+        // Add a line break after every two strings, except for the first string
+        const separator = index % 2 === 1 && index !== 0 ? '<br>' : '';
+    
+        // Add a comma if it's not the last string
+        const comma = index < data.genres.length - 1 ? ', ' : '';
+    
+        return genres + comma + separator;
+      }).join('');
+    }
+
+    function getNeighborList(data: any){
+      return data.neighbors.map((neighbors: any, index: any) => {
+        // Add a line break after every two strings, except for the first string
+        const separator = index % 2 === 1 && index !== 0 ? '<br>' : '';
+    
+        // Add a comma if it's not the last string
+        const comma = index < data.neighbors.length - 1 ? ', ' : '';
+    
+        return neighbors + comma + separator;
+      }).join('');
     }
 
     function handleZoom(event: any) {

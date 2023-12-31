@@ -19,9 +19,15 @@ class Artists(models.Model):
     
 class ArtistAssocs(models.Model): # maybe associate this with a specific UserId
     AssocId = models.AutoField(primary_key=True)
-    UserId = models.CharField(max_length=100) 
     SourceId = models.CharField(max_length=100)
     TargetId = models.CharField(max_length=100)
+    SourceName = models.CharField(max_length=100)
+    TargetName = models.CharField(max_length=100)
     Weight = models.IntegerField()
-    Type = models.CharField(max_length=100)
+    SharedGenres = models.JSONField()
+    
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['SourceId', 'TargetId'], name='composite_primary_key'),
+        ]
     

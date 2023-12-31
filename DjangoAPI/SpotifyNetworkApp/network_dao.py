@@ -6,7 +6,7 @@ from requests import Request, post, get
 from django.http import HttpResponseRedirect, HttpResponse
 from rest_framework_simplejwt.tokens import RefreshToken
 import json
-from .models import Artists
+from .models import Artists, ArtistAssocs
 
 class NetworkDAO:
     def __init__(self):
@@ -20,8 +20,10 @@ class NetworkDAO:
                 return True
             return False
         except Artists.DoesNotExist:
-            print("Does not exist")
             return False
+    
+    def get_artist(self, artist_id):
+        return Artists.objects.get(ArtistId=artist_id)
     
     def save_artist(self, artist):
         exists = self.artist_exists(artist['ArtistId'])
@@ -38,9 +40,33 @@ class NetworkDAO:
         else:
             return False
     
-    def get_artist(self, artist_id):
-        return Artists.objects.get(ArtistId=artist_id)
-          
+    def assoc_exists(self, source, target):
+        try:
+            assoc = ArtistAssocs.objects.get(SourceId=source, TargetId=target)
+            if assoc:
+                return True
+            return False
+        except ArtistAssocs.DoesNotExist:
+            return False
+    
+    def get_assoc(self, source, target):
+        try:
+            return ArtistAssocs.objects.get(SourceId=source, TargetId=target)
+        except ArtistAssocs.DoesNotExist:
+            return None
+        
+    def save_assoc(self, assoc):
+        exists = self.assoc_exists(assoc['SourceId'], assoc['TargetId'])
+        if(not exists):
+            source = assoc['SourceId']
+            target = assoc['TargetId']
+            weight = assoc['Weight']
+            assoc_obj = ArtistAssocs(SourceId=source,TargetId=target,Weight=weight)
+            assoc_obj.save()
+            return True
+        else:
+            return False
+        
     def save_network(self, session_id, timeframe):
         return ''
     

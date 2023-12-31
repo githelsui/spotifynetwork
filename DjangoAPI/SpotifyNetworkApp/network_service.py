@@ -14,12 +14,14 @@ class NetworkService:
         self.nodes = [] #data to be sent to client via our web api
         self.nodesDAO = [] #data to be saved to DAO
         self.links = []
+        self.link_pairs = set() #unique pairs only
     
     def get_graph(self, data):
         # get nodes
         self.nodes = self.get_nodes(data)
         # get links
-        self.links = self.get_links(data)
+        self.get_links(data)
+        print(self.link_pairs)
         return {'Nodes': self.nodes, 'Links': self.links}
         
     def get_nodes(self, data):
@@ -50,43 +52,61 @@ class NetworkService:
         return artistsAPI
         
     def get_links(self, data):
-        links = []
         for source_node in self.nodesDAO:
             for target_node in self.nodesDAO:
-                if source_node['ArtistId'] != target_node['ArtistId']: 
-                    #get node connections and their weights
-                    weight = self.get_weight(target_node, source_node)
-                    if weight > 0:
-                        # TODO: Shared genres between two artists
-                        # genres1 = source_node['ArtistGenre']
-                        # genres2 = target_node['ArtistGenre']
-                        # # print("\ngenres 1:")
-                        # print(genres1)
-                        # print("\ngenres 2:")
-                        # print(genres2)
-                        # genres1.extend(genres2)
-                        # print("\nshared genres:")
-                        # print(genres1)
-                        # shared_genres = set(genres1)
-                        # print("\set genres:")
-                        # print(shared_genres)
-                        link = {
-                            'source': source_node['ArtistId'],
-                            'target': target_node['ArtistId'],
-                            'source_name': source_node['ArtistName'],
-                            'target_name': target_node['ArtistName'],
-                            'weight': weight,
-                            # 'genres': shared_genres
-                        }
-                        links.append(link)
-                        # update artist node with new neighbor
-                        
-        return links
+                source_id = source_node['ArtistId']
+                target_id = target_node['ArtistId']
+                if source_id != target_id and self.is_unique_link(source_node, target_node): 
+                    assoc = self.NetworkDAO.get_assoc(source_id, target_id)
+                    if assoc:
+                        self.links.append(assoc)
+                        primary_key = source_node['SourceId'] + ':' + target_node['TargetId']
+                        self.link_pairs.add(primary_key)
+                    else:
+                        self.create_link(source_node, target_node)
     
-    def get_neighbors(self):
-        for artist in self.nodes:
-            artist_id = artist['id']
-            
+    def is_unique_link(self, source, target):
+        source_id = source['ArtistId']
+        target_id = target['ArtistId']
+        if (source_id + ':' + target_id) in self.link_pairs:
+            return False 
+        if (target_id + ':' + source_id) in self.link_pairs:
+            return False 
+        return True
+    
+    def create_link(self, source_node, target_node):
+        #get node connections and their weights
+        weight = self.get_weight(target_node, source_node)
+        if weight > 0:
+            link = {
+                'source': source_node['ArtistId'],
+                'target': target_node['ArtistId'],
+                'source_name': source_node['ArtistName'],
+                'target_name': target_node['ArtistName'],
+                'weight': weight,
+                # 'genres': shared_genres
+            }
+            self.links.append(link)
+            primary_key = source_node['ArtistId'] + ':' + target_node['ArtistId']
+            self.link_pairs.add(primary_key)
+            # self.NetworkDAO.save_assoc(link)
+    
+    def get_shared_genres(self):
+         # TODO: Shared genres between two artists
+        # genres1 = source_node['ArtistGenre']
+        # genres2 = target_node['ArtistGenre']
+        # # print("\ngenres 1:")
+        # print(genres1)
+        # print("\ngenres 2:")
+        # print(genres2)
+        # genres1.extend(genres2)
+        # print("\nshared genres:")
+        # print(genres1)
+        # shared_genres = set(genres1)
+        # print("\set genres:")
+        # print(shared_genres)
+        return ''
+
     
     def get_weight(self, artist1, artist2):
         weight = 0

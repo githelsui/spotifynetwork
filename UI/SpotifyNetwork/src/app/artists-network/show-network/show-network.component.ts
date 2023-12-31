@@ -209,7 +209,7 @@ export class ShowNetworkComponent implements OnInit {
 
     function handleLinkClick(event: any, link: any) {
     //   var genres = ""
-    //   for (var i = 0; i < link.genres.length; i++) {
+    //   for (var i = 0; i < link.Genres.length; i++) {
     //     genres += "<p>" + genres[i] + "</p>";
     // } 
       const content = `<div class="d-flex justify-content-center align-items-center">
@@ -306,7 +306,6 @@ export class ShowNetworkComponent implements OnInit {
   private getNodeColor(genre: any){
     if(this.TopGenres != null){
       const color = this.TopGenres[genre]
-      console.log(color)
       return color
     } else {
       return "#000000"

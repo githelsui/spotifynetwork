@@ -6,7 +6,7 @@ from requests import Request, post, get
 from django.http import HttpResponseRedirect, HttpResponse
 from rest_framework_simplejwt.tokens import RefreshToken
 import json
-from .models import Artists, ArtistAssocs
+from .models import Artists, ArtistAssocs, ArtistNetworks
 
 class NetworkDAO:
     def __init__(self):
@@ -56,21 +56,42 @@ class NetworkDAO:
             return None
         
     def save_assoc(self, assoc):
-        exists = self.assoc_exists(assoc['SourceId'], assoc['TargetId'])
+        exists = self.assoc_exists(assoc['source'], assoc['target'])
         if(not exists):
             source = assoc['source']
             target = assoc['target']
             source_name = assoc['source_name']
             target_name = assoc['target_name']
             weight = assoc['weight']
-            assoc_obj = ArtistAssocs(SourceId=source,TargetId=target,SourceName=source_name,TargetName=target_name,Weight=weight)
+            genres = assoc['genres']
+            assoc_obj = ArtistAssocs(SourceId=source,TargetId=target,SourceName=source_name,TargetName=target_name,Weight=weight,SharedGenres=genres)
             assoc_obj.save()
             return True
         else:
             return False
         
-    def save_network(self, session_id, timeframe):
-        return ''
+    def network_exists(self, session_id, timeframe):
+        try:
+            network = ArtistNetworks.objects.get(SessionId=session_id, Timeframe=timeframe)
+            if network:
+                return True
+            return False
+        except ArtistNetworks.DoesNotExist:
+            return False
+        
+    def save_network(self, session_id, timeframe, network):
+        exists = self.network_exists(session_id, timeframe)
+        if(not exists):
+            nodes = network['Nodes']
+            links = network['Links']
+            network_obj = ArtistNetworks(SessionId=session_id,Timeframe=timeframe,Nodes=nodes,Links=links)
+            network_obj.save()
+            return True
+        else:
+            return False
     
     def get_network(self, session_id, timeframe):
-        return ''
+        try:
+            return ArtistNetworks.objects.get(SessionId=session_id, Timeframe=timeframe)
+        except ArtistNetworks.DoesNotExist:
+            return None

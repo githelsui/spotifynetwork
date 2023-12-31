@@ -31,7 +31,9 @@ export class ShowNetworkComponent implements OnInit {
    
   ngOnInit(): void {
     //Load network data
-    this.loadData();
+    if(this.AuthSession) {
+      this.loadData();
+    }
   }
 
   private setScreenDimensions(): void {
@@ -46,7 +48,6 @@ export class ShowNetworkComponent implements OnInit {
 
   loadData():void {
     this.IsLoading = true;
-    console.log(this.AuthSession)
     var payload = {
       'session_id': this.AuthSession['SessionId'],
       'timeframe': this.TimeFrame
@@ -103,21 +104,22 @@ export class ShowNetworkComponent implements OnInit {
       .force('link', d3.forceLink(this.Links)
         .id((d: any) => d.id)
         .distance((d: any) => this.getLinkDistance(d.weight))) 
-      .force('charge', d3.forceManyBody())
-      .force('center', d3.forceCenter(this.Width / 2.5, this.Height / 2.15));
+      .force('charge', d3.forceManyBody().strength(-10))
+      .force('collide', d3.forceCollide().radius(100)) // Optional: Force to prevent node overlap
+      .force('center', d3.forceCenter(this.Width / 2.5, this.Height / 2.1));
 
     const zoom = d3
     .zoom()
-    .scaleExtent([1, 10]) // Set the scale extent as needed
-    .on('zoom', (event) => zoomed(event));
+    .scaleExtent([0.5, 10]) // Set the scale extent as needed
+    .on('zoom', (event) => handleZoom(event));
     svg.call(zoom as any)
 
     const link = svg.selectAll('line')
       .data(this.Links)
       .enter().append('line')
       .style('stroke', 'black')
-      .attr("stroke-width", 1.5)
-      .style('stroke-dasharray', '5,5') 
+      .attr("stroke-width", 1.4)
+      .style('stroke-dasharray', '7,3') 
       .style('cursor', 'pointer')
       .on('mouseover', (event, d) => handleLinkClick(event, d)) 
       .on('mouseout', () => hideTooltip());
@@ -190,12 +192,20 @@ export class ShowNetworkComponent implements OnInit {
 
     //hover
     function handleNodeClick(event: any, artist: any) {
+      var genres = ""
+      for (var i = 0; i < artist.genres.length; i++) {
+        if(i == artist.genres.length-1)
+          genres += artist.genres[i];
+        else 
+          genres += artist.genres[i] + ", ";
+      } 
+
       const content = `<div class="d-flex justify-content-center align-items-center">
       <div class="d-flex flex-column">
           <img src="${artist.image}" width="300" height="300">
           <h4>&gt; ${artist.name}</h4>
           <h6>Rank: ${artist.rank}</h6>
-          <h6>Genres: ${artist.genre}</h6>
+          <h6>Genres: ${genres}</h6>
           <h6>Popularity:  ${artist.popularity}</h6>
           <h6>Most Similar: neighbors</h6>
       </div>
@@ -238,13 +248,12 @@ export class ShowNetworkComponent implements OnInit {
       tooltip.style('visibility', 'hidden');
     }
 
-    const zone = this.zone;
-    function zoomed(event: any) {
-      zone.runOutsideAngular(() => {
-        requestAnimationFrame(() => {
-          svg.attr('transform', event.transform);
-        });
-      });
+    function handleZoom(event: any) {
+      const transform = event.transform;
+      // Update the positions of nodes based on the zoom transformation
+      node.attr("transform", transform);
+      link.attr("transform", transform);
+      labels.attr("transform", transform);
     }
 
     function dragstarted(event: any){
@@ -275,7 +284,7 @@ export class ShowNetworkComponent implements OnInit {
     // Normalize node weight between 0 and 1
     const normalizedWeight = (weight) / (maxNodeWeight - minNodeWeight);
     // Calculate link distance based on normalized weight
-    const linkDistance = (normalizedWeight * 0.86) * maxLinkDistance;
+    const linkDistance = (normalizedWeight * 0.85) * (maxLinkDistance);
     // return (this.Height / weight);
     return linkDistance;
   }
@@ -332,7 +341,6 @@ export class ShowNetworkComponent implements OnInit {
       i++;
     }
     this.TopGenres = topGenres
-    console.log(this.TopGenres)
   }
 
   // Receives data from legend selection child component

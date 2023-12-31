@@ -21,15 +21,23 @@ class NetworkManager:
         status = None
         item = None
         
-        response = self.extract_data(session_id, timeframe)
-        status = response['status']
-        if status:
-            data = response['item']
-            graph = self.NetworkService.get_graph(data)
-            item = graph
+        network = self.NetworkDAO.get_network(session_id, timeframe)
+        if network:
+            # Get saved network data for that session and timeframe selection
             status = True
+            item = {'Nodes': network.Nodes, 'Links': network.Links}
         else:
-            status = False 
+            # Create new network data
+            response = self.extract_data(session_id, timeframe)
+            status = response['status']
+            if status:
+                data = response['item']
+                graph = self.NetworkService.get_graph(data)
+                self.NetworkDAO.save_network(session_id, timeframe, graph)
+                item = graph
+                status = True
+            else:
+                status = False 
         result = {'status': status, 'item': item}
         return result 
     

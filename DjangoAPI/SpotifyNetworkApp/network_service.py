@@ -58,8 +58,9 @@ class NetworkService:
                 if source_id != target_id and self.is_unique_link(source_node, target_node): 
                     assoc = self.NetworkDAO.get_assoc(source_id, target_id)
                     if assoc:
-                        self.links.append(assoc)
-                        primary_key = source_node['SourceId'] + ':' + target_node['TargetId']
+                        assoc_api = assoc.convert_api()
+                        self.links.append(assoc_api)
+                        primary_key = source_id + ':' + target_id
                         self.link_pairs.add(primary_key)
                     else:
                         self.create_link(source_node, target_node)
@@ -89,7 +90,7 @@ class NetworkService:
             self.links.append(link)
             primary_key = source_node['ArtistId'] + ':' + target_node['ArtistId']
             self.link_pairs.add(primary_key)
-            # self.NetworkDAO.save_assoc(link)
+            self.NetworkDAO.save_assoc(link)
     
     def get_genres(self, source_node, target_node):
         combined = []

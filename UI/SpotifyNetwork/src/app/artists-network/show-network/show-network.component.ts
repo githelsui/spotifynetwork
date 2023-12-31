@@ -200,10 +200,9 @@ export class ShowNetworkComponent implements OnInit {
       <div class="d-flex flex-column">
           <img src="${artist.image}" width="300" height="300">
           <h4>&gt; ${artist.name}</h4>
-          <h6>Rank: ${artist.rank}</h6>
-          <h6>Genres: ${genres}</h6>
-          <h6>Popularity:  ${artist.popularity}</h6>
-          <h6>Most Similar: <br>${neighbors}</h6>
+          <h6>/Your #${artist.rank} Most Listened To Artist</h6>
+          <h6>/Genres: ${genres}</h6>
+          <h6>/Most Similar In Your Network: <br>${neighbors}</h6>
       </div>
       </div>`
 
@@ -220,7 +219,7 @@ export class ShowNetworkComponent implements OnInit {
       <div class="d-flex flex-column">
           <h3>${link.source_name} and ${link.target_name}</h3>
           <h5>&gt; Similarity Score: ${link.weight}</h5>
-          <h7>Similarity based on the likelihood<br> of ${link.source_name}'s audience listening to ${link.target_name}</h7>
+          <h6>Similarity based on the likelihood<br> of ${link.source_name}'s audience listening to ${link.target_name}</h6>
           <br>
           <h5>&gt; Shared Genres: ${genres}</h5>
       </div>

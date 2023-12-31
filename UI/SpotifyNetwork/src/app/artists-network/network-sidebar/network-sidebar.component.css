@@ -24,7 +24,7 @@
     margin-bottom: 5px;
     border: none;
     cursor: pointer;
-    font-style: oblique;
+    font-weight: 100;
     transition: background-color 0.3s ease;
   }
   
@@ -41,6 +41,7 @@
     margin-bottom: 5px;
     border: none;
     cursor: pointer;
+    font-weight: 100;
     transition: background-color 0.3s ease;
   }
 

@@ -21,7 +21,6 @@ class NetworkService:
         self.nodes = self.get_nodes(data)
         # get links
         self.get_links(data)
-        print(self.link_pairs)
         return {'Nodes': self.nodes, 'Links': self.links}
         
     def get_nodes(self, data):
@@ -76,36 +75,30 @@ class NetworkService:
     
     def create_link(self, source_node, target_node):
         #get node connections and their weights
-        weight = self.get_weight(target_node, source_node)
+        weight = self.get_weight(source_node, target_node)
         if weight > 0:
+            genres = self.get_genres(source_node, target_node)
             link = {
                 'source': source_node['ArtistId'],
                 'target': target_node['ArtistId'],
                 'source_name': source_node['ArtistName'],
                 'target_name': target_node['ArtistName'],
                 'weight': weight,
-                # 'genres': shared_genres
+                'genres': genres
             }
             self.links.append(link)
             primary_key = source_node['ArtistId'] + ':' + target_node['ArtistId']
             self.link_pairs.add(primary_key)
             # self.NetworkDAO.save_assoc(link)
     
-    def get_shared_genres(self):
-         # TODO: Shared genres between two artists
-        # genres1 = source_node['ArtistGenre']
-        # genres2 = target_node['ArtistGenre']
-        # # print("\ngenres 1:")
-        # print(genres1)
-        # print("\ngenres 2:")
-        # print(genres2)
-        # genres1.extend(genres2)
-        # print("\nshared genres:")
-        # print(genres1)
-        # shared_genres = set(genres1)
-        # print("\set genres:")
-        # print(shared_genres)
-        return ''
+    def get_genres(self, source_node, target_node):
+        combined = []
+        genres1 = source_node['ArtistGenre']
+        genres2 = target_node['ArtistGenre']
+        combined.extend(genres1)
+        combined.extend(genres2)
+        shared_genres = set(combined) #remove duplicates
+        return list(shared_genres)
 
     
     def get_weight(self, artist1, artist2):

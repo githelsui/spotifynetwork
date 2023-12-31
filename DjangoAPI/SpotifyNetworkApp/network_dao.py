@@ -58,10 +58,12 @@ class NetworkDAO:
     def save_assoc(self, assoc):
         exists = self.assoc_exists(assoc['SourceId'], assoc['TargetId'])
         if(not exists):
-            source = assoc['SourceId']
-            target = assoc['TargetId']
-            weight = assoc['Weight']
-            assoc_obj = ArtistAssocs(SourceId=source,TargetId=target,Weight=weight)
+            source = assoc['source']
+            target = assoc['target']
+            source_name = assoc['source_name']
+            target_name = assoc['target_name']
+            weight = assoc['weight']
+            assoc_obj = ArtistAssocs(SourceId=source,TargetId=target,SourceName=source_name,TargetName=target_name,Weight=weight)
             assoc_obj.save()
             return True
         else:

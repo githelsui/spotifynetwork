@@ -116,6 +116,7 @@ export class ShowNetworkComponent implements OnInit {
       .data(this.Links)
       .enter().append('line')
       .style('stroke', 'black')
+      .attr("stroke-width", 1.5)
       .style('stroke-dasharray', '5,5') 
       .style('cursor', 'pointer')
       .on('mouseover', (event, d) => handleLinkClick(event, d)) 
@@ -208,14 +209,20 @@ export class ShowNetworkComponent implements OnInit {
     }
 
     function handleLinkClick(event: any, link: any) {
-    //   var genres = ""
-    //   for (var i = 0; i < link.Genres.length; i++) {
-    //     genres += "<p>" + genres[i] + "</p>";
-    // } 
+      var genres = ""
+      for (var i = 0; i < link.genres.length; i++) {
+        if(i == link.genres.length-1)
+          genres += link.genres[i];
+        else 
+          genres += link.genres[i] + ", ";
+      } 
       const content = `<div class="d-flex justify-content-center align-items-center">
       <div class="d-flex flex-column">
-          <h5>${link.source_name} and ${link.target_name}</h5>
+          <h3>${link.source_name} and ${link.target_name}</h3>
           <h5>&gt; Similarity Score: ${link.weight}</h5>
+          <h7>Similarity based on the likelihood of ${link.source_name}'s audience listening to ${link.target_name}</h7>
+          <br>
+          <h5>&gt; Shared Genres: ${genres}</h5>
       </div>
       </div>`
       tooltip.html(content);

@@ -105,7 +105,7 @@ export class ShowNetworkComponent implements OnInit {
         .id((d: any) => d.id)
         .distance((d: any) => this.getLinkDistance(d.weight))) 
       .force('charge', d3.forceManyBody().strength(-10))
-      .force('collide', d3.forceCollide().radius(100)) // Optional: Force to prevent node overlap
+      .force('collide', d3.forceCollide().radius(150)) // Optional: Force to prevent node overlap
       .force('center', d3.forceCenter(this.Width / 2.5, this.Height / 2.1));
 
     const zoom = d3
@@ -192,15 +192,9 @@ export class ShowNetworkComponent implements OnInit {
 
     //hover
     function handleNodeClick(event: any, artist: any) {
-      var genres = ""
-      for (var i = 0; i < artist.genres.length; i++) {
-        if(i == artist.genres.length-1)
-          genres += artist.genres[i];
-        else 
-          genres += artist.genres[i] + ", ";
-      } 
+      var genres = getGenreList(artist)
 
-      const content = `<div class="d-flex justify-content-center align-items-center">
+      const content = `<div class="artist-container">
       <div class="d-flex flex-column">
           <img src="${artist.image}" width="300" height="300">
           <h4>&gt; ${artist.name}</h4>
@@ -219,18 +213,12 @@ export class ShowNetworkComponent implements OnInit {
     }
 
     function handleLinkClick(event: any, link: any) {
-      var genres = ""
-      for (var i = 0; i < link.genres.length; i++) {
-        if(i == link.genres.length-1)
-          genres += link.genres[i];
-        else 
-          genres += link.genres[i] + ", ";
-      } 
+      var genres = getGenreList(link)
       const content = `<div class="d-flex justify-content-center align-items-center">
       <div class="d-flex flex-column">
           <h3>${link.source_name} and ${link.target_name}</h3>
           <h5>&gt; Similarity Score: ${link.weight}</h5>
-          <h7>Similarity based on the likelihood of ${link.source_name}'s audience listening to ${link.target_name}</h7>
+          <h7>Similarity based on the likelihood<br> of ${link.source_name}'s audience listening to ${link.target_name}</h7>
           <br>
           <h5>&gt; Shared Genres: ${genres}</h5>
       </div>
@@ -246,6 +234,19 @@ export class ShowNetworkComponent implements OnInit {
 
     function hideTooltip() {
       tooltip.style('visibility', 'hidden');
+    }
+
+    function getGenreList(data: any){
+      var genres = ""
+      for (var i = 0; i < data.genres.length; i++) {
+        if(i == data.genres.length-1)
+          genres += data.genres[i];
+        else if(i % 2 == 0)
+        genres += "<br>" + data.genres[i] + ", ";
+        else 
+          genres += data.genres[i] + ", ";
+      } 
+      return genres
     }
 
     function handleZoom(event: any) {

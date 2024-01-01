@@ -8,17 +8,14 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 export class NetworkLegendComponent {
 
   @Input() TopGenres:any=[];
+  @Input() ResetGenre:boolean=false;
   @Output() SelectedGenre = new EventEmitter<string>();
-
-  //Development Data
-  items = [
-    { name: 'acoustic', color: '#1f78c1' },
-    { name: 'afrobeat', color: '#33a02c' },
-    { name: 'alternative', color: '#ff7f00' }
-  ];
+  Genre:string="";
 
   selectGenre(genre: any){
-    this.SelectedGenre.emit(genre['genre'])
+    this.ResetGenre = false;
+    this.SelectedGenre.emit(genre)
+    this.Genre = genre
   }
   
   getObjectKeys(obj: object): string[] {

@@ -2,9 +2,21 @@
   <div class="overlay-buttons">
     <div *ngFor="let key of getObjectKeys(this.TopGenres)" class="row justify-content-end align-items-center mb-2">
         <div *ngIf="key !== 'N/A'" class="col-12 col-sm-6 col-md-8">
-          <button class="legend-label" (click)="selectGenre(key)">
-            {{ key }}
-          </button>
+          <div *ngIf="this.Genre == key && this.ResetGenre == false">
+            <button class="selected-genre" (click)="selectGenre(key)">
+              {{ key }}
+            </button>
+          </div>
+          <div *ngIf="this.Genre != key && this.ResetGenre == false">
+            <button class="legend-label" (click)="selectGenre(key)">
+              {{ key }}
+            </button>
+          </div>
+          <div *ngIf="this.ResetGenre == true">
+            <button class="legend-label" (click)="selectGenre(key)">
+              {{ key }}
+            </button>
+          </div>
         </div>
         <div *ngIf="key !== 'N/A'" class="col-2 col-md-4">
           <div class="color" [style.background-color]="this.TopGenres[key]"></div>

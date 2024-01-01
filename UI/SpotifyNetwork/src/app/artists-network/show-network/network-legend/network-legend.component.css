@@ -28,6 +28,18 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
+
+  .selected-genre {
+    font-size: 16px;
+    background-color: black;
+    color: white;
+    text-align: right;
+    padding: 3px;
+    margin-bottom: 5px;
+    font-weight: 100;
+    border: none;
+    cursor: pointer;
+  }
   
   .legend-label:hover {
     background-color: #000000;

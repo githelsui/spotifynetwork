@@ -18,10 +18,12 @@ export class ShowNetworkComponent implements OnInit {
   Width:number=0;
   Height:number=0;
   GenreColor:any=null;
-  SelectedGenre:any=null;
+  SelectedGenre:any="";
   Nodes:any=null;
   Links:any=null;
   IsLoading:boolean=true;
+  NodeObjs:any=null;
+  ResetGenre:boolean=false;
 
   constructor(
     private service:SharedService,
@@ -105,9 +107,10 @@ export class ShowNetworkComponent implements OnInit {
       .force('link', d3.forceLink(this.Links)
         .id((d: any) => d.id)
         .distance((d: any) => this.getLinkDistance(d.weight))) 
-      .force('charge', d3.forceManyBody().strength(-10))
+      .force('charge', d3.forceManyBody().strength(-100))
       .force('collide', d3.forceCollide().radius(150)) // Optional: Force to prevent node overlap
-      .force('center', d3.forceCenter(this.Width / 2.5, this.Height / 2.1));
+      .force('center', d3.forceCenter(this.Width / 2.5, this.Height / 2.1))
+      .alphaDecay(0.17);
 
     const zoom = d3
     .zoom()
@@ -205,12 +208,17 @@ export class ShowNetworkComponent implements OnInit {
 
     const self = this;
     function resetStyles() {
-      console.log('reset styles')
+      console.log('reset style')
       link.style('stroke', 'black')
       link.attr("stroke-width", 1)
       node.style('fill', (d: any) => self.getNodeColor(d.genre)) 
-      .style('stroke', (d: any) => self.getNodeColor(d.genre))
+          .style('stroke', (d: any) => self.getNodeColor(d.genre));
+      self.NodeObjs = node
+      if(self.SelectedGenre != ""){
+        self.deselectGenre()
+      }
     }
+
 
     function handleNodeHover(event: any, artist: any) {
       var genres = getGenreList(artist)
@@ -264,7 +272,7 @@ export class ShowNetworkComponent implements OnInit {
 
       // Selected node styling
       node.filter((d: any)=>d.id === artist.id)
-      .style("stroke", "blue")
+      .style("stroke", "black")
       .style("fill", "blue")
     }
 
@@ -355,6 +363,7 @@ export class ShowNetworkComponent implements OnInit {
       event.subject.fy = null;
     }
 
+    this.NodeObjs = node;
     this.IsLoading = false;
   }
 
@@ -428,5 +437,42 @@ export class ShowNetworkComponent implements OnInit {
   // Receives data from legend selection child component
   setSelectedGenre(genre: string) {
     this.SelectedGenre = genre;
+    this.highlightArtistsOfGenre(genre)
+  }
+
+  highlightArtistsOfGenre(genre: string){
+    console.log("reset genre: " +this.ResetGenre)
+    console.log(this.SelectedGenre + ' data received')
+    console.log(this.NodeObjs)
+    const nodeObjs = this.NodeObjs['_groups'][0]
+    for (const node of nodeObjs){
+      const nodeData = (node as any).__data__
+      const nodeGenres = (nodeData as any).genres
+      if(nodeGenres.includes(this.SelectedGenre)){
+        const color = this.TopGenres[this.SelectedGenre]
+        this.highlightArtist(node, color)
+      } 
+      else 
+      {
+        this.highlightArtist(node, "#d8d8d8")
+      }
+    }
+  }
+
+  highlightArtist(node: any, color: any){
+    const attr = (node as any).attributes
+    var fill = (attr as any).fill 
+    fill.nodeValue = color
+    fill.textContent = color
+    fill.value = color
+    var stroke = (attr as any).stroke 
+    stroke.nodeValue = color
+    // console.log(attr)
+  }
+
+  deselectGenre(){
+    this.ResetGenre = true;
+    this.SelectedGenre = "";
+    this.renderGraph()
   }
 }

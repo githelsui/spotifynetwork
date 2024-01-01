@@ -196,13 +196,17 @@ export class ShowNetworkComponent implements OnInit {
     function handleNodeClick(event: any, artist: any) {
       var genres = getGenreList(artist)
       var neighbors = getNeighborList(artist)
+      var timeframe = timeframeDetails()
       const content = `<div class="artist-container">
       <div class="d-flex flex-column">
           <img src="${artist.image}" width="300" height="300">
-          <h4>&gt; ${artist.name}</h4>
-          <h6>/Your #${artist.rank} Most Listened To Artist</h6>
-          <h6>/Genres: ${genres}</h6>
-          <h6>/Most Similar In Your Network: <br>${neighbors}</h6>
+          <h4 style="font-weight: 400; padding-top: 10px">&gt; ${artist.name}</h4>
+          <h6 style="font-weight: 400;">/Your #${artist.rank} Most Listened To Artist</h6>
+          <h6 style="font-weight: 400;">${timeframe}</h6>
+          <h6 style="font-weight: 400;">/Genres:</h6>
+          <h6 style="font-weight: 300;">${genres}</h6>
+          <h6 style="font-weight: 400;">/Most Similar In Your Network:</h6>
+          <h6 style="font-weight: 300;">${neighbors}</h6>
       </div>
       </div>`
 
@@ -217,11 +221,11 @@ export class ShowNetworkComponent implements OnInit {
       var genres = getGenreList(link)
       const content = `<div class="d-flex justify-content-center align-items-center">
       <div class="d-flex flex-column">
-          <h3>${link.source_name} and ${link.target_name}</h3>
-          <h5>&gt; Similarity Score: ${link.weight}</h5>
-          <h6>Similarity based on the likelihood<br> of ${link.source_name}'s audience listening to ${link.target_name}</h6>
+          <h3 style="font-weight: 400;">${link.source_name} and ${link.target_name}</h3>
+          <h5 style="font-weight: 300;">&gt; Similarity Score: ${link.weight}</h5>
+          <h6 style="font-weight: 300;">Similarity based on the likelihood<br> of ${link.source_name}'s audience listening to ${link.target_name}</h6>
           <br>
-          <h5>&gt; Shared Genres: ${genres}</h5>
+          <h5 style="font-weight: 300;">&gt; Shared Genres: ${genres}</h5>
       </div>
       </div>`
       tooltip.html(content);
@@ -235,6 +239,20 @@ export class ShowNetworkComponent implements OnInit {
 
     function hideTooltip() {
       tooltip.style('visibility', 'hidden');
+    }
+
+    const timeframe = this.TimeFrame;
+    function timeframeDetails(){
+      if(timeframe == "long_term"){
+        return "since your account creation"
+      }
+      if(timeframe == "medium_term"){
+        return "in the last 6 months"
+      }
+      if(timeframe == "short_term"){
+        return "in the last 4 weeks"
+      }
+      return ""
     }
 
     function getGenreList(data: any){

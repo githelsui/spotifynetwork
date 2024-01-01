@@ -22,6 +22,8 @@ class NetworkService:
         self.get_nodes(data)
         # get links
         self.get_links(data)
+        # get links for outlier nodes (less obvious connections)
+        self.handle_outliers()
         # get neighbors per node based on updated links
         self.get_neighbors()
         return {'Nodes': self.nodesAPI, 'Links': self.links}
@@ -98,18 +100,7 @@ class NetworkService:
         weight = self.get_weight(source_node, target_node)
         if weight > 0:
             genres = self.get_genres(source_node, target_node)
-            link = {
-                'source': source_node['ArtistId'],
-                'target': target_node['ArtistId'],
-                'source_name': source_node['ArtistName'],
-                'target_name': target_node['ArtistName'],
-                'weight': weight,
-                'genres': genres
-            }
-            self.links.append(link)
-            primary_key = source_node['ArtistId'] + ':' + target_node['ArtistId']
-            self.link_pairs.add(primary_key)
-            self.NetworkDAO.save_assoc(link)
+            self.add_link(source_node, target_node, weight, genres)
     
     def get_genres(self, source_node, target_node):
         combined = []
@@ -156,3 +147,59 @@ class NetworkService:
                 score += 1
         return score
     
+    def add_link(self, source_node, target_node, weight, genres):
+        if weight > 0:
+            link = {
+                'source': source_node['ArtistId'] if ('ArtistId' in source_node) else source_node['id'],
+                'target': target_node['ArtistId'] if ('ArtistId' in target_node) else target_node['id'],
+                'source_name': source_node['ArtistName'] if ('ArtistName' in source_node) else source_node['name'],
+                'target_name': target_node['ArtistName'] if ('ArtistName' in target_node) else target_node['name'],
+                'weight': weight,
+                'genres': genres
+            }
+            self.links.append(link)
+            primary_key = (source_node['ArtistId'] if ('ArtistId' in source_node) else source_node['id']) + ':' + (target_node['ArtistId'] if ('ArtistId' in target_node) else target_node['id'])
+            self.link_pairs.add(primary_key)
+            self.NetworkDAO.save_assoc(link)
+    
+    def is_outlier(self, artist_id):
+        for link in self.links:
+            source_id = link['source']
+            target_id = link['target']
+            if artist_id == source_id or artist_id == target_id:
+                return False
+        return True
+    
+    def handle_outliers(self):
+        for artist in self.nodes:
+            is_outlier = self.is_outlier(artist['id'])
+            if is_outlier:
+                for target in self.nodes:
+                    source_id = artist['id']
+                    target_id = target['id']
+                    if source_id != target_id:
+                        outlier_genres = self.outlier_genres(artist, target)
+                        outlier_weight = len(outlier_genres) / 2
+                        print('\nShared Genres:')
+                        print(outlier_genres)
+                        self.add_link(artist,target,outlier_weight,outlier_genres)
+    
+    def outlier_genres(self, source_node, target_node):
+        # Turn individual spotify genres into individual words per index
+        genre_words_1 = [string.split() for string in source_node['genres']]
+        flat_genre_1 = []
+        [flat_genre_1.extend(sublist) for sublist in genre_words_1]
+        print('\nGENRE 1:')
+        print(flat_genre_1)
+        
+        genre_words_2 = [string.split() for string in target_node['genres']]
+        flat_genre_2 = []
+        [flat_genre_2.extend(sublist) for sublist in genre_words_2]
+        print('\nGENRE 2:')
+        print(flat_genre_2)
+        genre_words = []
+        for genre in flat_genre_1:
+            if genre in flat_genre_2:
+                genre_words.append(genre)
+        shared_genres = set(genre_words) #remove duplicates
+        return list(shared_genres)

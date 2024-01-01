@@ -1,10 +1,15 @@
 .sign-in-button {
     padding: 10px;
     border: 0px;
+    font-weight: 100;
     transition: background-color 0.3s ease;
 }
 
 .sign-in-button:hover {
     background-color: black;
     color:white;
+}
+
+.title {
+    font-weight:300;
 }

@@ -120,10 +120,10 @@ export class ShowNetworkComponent implements OnInit {
       .data(this.Links)
       .enter().append('line')
       .style('stroke', 'black')
-      .attr("stroke-width", 1.4)
+      .attr("stroke-width", 1)
       .style('stroke-dasharray', '7,3') 
       .style('cursor', 'pointer')
-      .on('mouseover', (event, d) => handleLinkClick(event, d)) 
+      .on('mouseover', (event, d) => handleLinkHover(event, d)) 
       .on('mouseout', () => hideTooltip());
 
     const dragBehavior = d3.drag<SVGGElement, { id: number, name: string }, { id: number, name: string }>()
@@ -144,7 +144,8 @@ export class ShowNetworkComponent implements OnInit {
     .attr('stroke', (d: any) => this.getNodeColor(d.genre)) 
     .attr('stroke-width', 5) // Set the border width
     .style('cursor', 'pointer')
-    .on('mouseover', (event, d) => handleNodeClick(event, d)) 
+    .on('mouseover', (event, d) => handleNodeHover(event, d)) 
+    .on('click', (event, d) => handleNodeClick(event, d))
     .on('mouseout', () => hideTooltip())
     .call(dragBehavior as any);
 
@@ -160,7 +161,8 @@ export class ShowNetworkComponent implements OnInit {
     .attr('dominant-baseline', 'central')
     .attr('fill', 'white')
     .style('cursor', 'pointer')
-    .on('mouseover', (event, d) => handleNodeClick(event, d)) 
+    .on('mouseover', (event, d) => handleNodeHover(event, d)) 
+    .on('click', (event, d) => handleNodeClick(event, d))
     .on('mouseout', () => hideTooltip())
     .text((d: any) => (d.name).toUpperCase());
 
@@ -192,8 +194,25 @@ export class ShowNetworkComponent implements OnInit {
           .attr('y', (d: any) => d.y);
       });
 
-    //hover
-    function handleNodeClick(event: any, artist: any) {
+    // Event listener for clicks on the SVG container
+    svg.on("click", function(event) {
+      // Check if the click target is not a node
+      const nodeClicked = event.target.classList.contains("label") || event.target.classList.contains("node")
+      if (!nodeClicked) {
+        resetStyles();
+      }
+    });
+
+    const self = this;
+    function resetStyles() {
+      console.log('reset styles')
+      link.style('stroke', 'black')
+      link.attr("stroke-width", 1)
+      node.style('fill', (d: any) => self.getNodeColor(d.genre)) 
+      .style('stroke', (d: any) => self.getNodeColor(d.genre))
+    }
+
+    function handleNodeHover(event: any, artist: any) {
       var genres = getGenreList(artist)
       var neighbors = getNeighborList(artist)
       var timeframe = timeframeDetails()
@@ -217,7 +236,39 @@ export class ShowNetworkComponent implements OnInit {
         .style('visibility', 'visible');
     }
 
-    function handleLinkClick(event: any, link: any) {
+    function handleNodeClick(event: any, artist: any){
+      link.style("stroke", "gray");
+      link.attr("stroke-width", 0.5);
+      node.style("stroke", "#D6D6D6")
+      node.style("fill", "#D6D6D6")
+
+      // Highlight links connected to the selected node
+      link.filter((d: any)=> d.source === artist || d.target === artist)
+      .style("stroke", "blue") 
+      .attr("stroke-width", 2)
+
+      // Get array of node IDs connected to the selected node
+      const connectedNodes = (link as any).data().reduce((acc:any, curr:any) => {
+        if (curr.source === artist) {
+          acc.push(curr.target);
+        } else if (curr.target === artist) {
+          acc.push(curr.source);
+        }
+        return acc;
+      }, []);
+
+       // Change style of connected nodes
+      node.filter((d: any) => connectedNodes.includes(d))
+      .style("fill", "blue")  // You can use a different fill color
+      .style("stroke", "blue");  // You can use a different stroke color
+
+      // Selected node styling
+      node.filter((d: any)=>d.id === artist.id)
+      .style("stroke", "blue")
+      .style("fill", "blue")
+    }
+
+    function handleLinkHover(event: any, link: any) {
       var genres = getGenreList(link)
       const content = `<div class="d-flex justify-content-center align-items-center">
       <div class="d-flex flex-column">
@@ -225,7 +276,8 @@ export class ShowNetworkComponent implements OnInit {
           <h5 style="font-weight: 300;">&gt; Similarity Score: ${link.weight}</h5>
           <h6 style="font-weight: 300;">Similarity based on the likelihood<br> of ${link.source_name}'s audience listening to ${link.target_name}</h6>
           <br>
-          <h5 style="font-weight: 300;">&gt; Shared Genres: ${genres}</h5>
+          <h5 style="font-weight: 300;">&gt; Shared Genres:</h5>
+          <h6 style="font-weight: 300;">${genres}</h6>
       </div>
       </div>`
       tooltip.html(content);

@@ -67,7 +67,7 @@ export class ShowNetworkComponent implements OnInit {
   renderContainer(): void {
     this.service.getGenreColor().subscribe(
       (data) => {
-        this.GenreColor = (data as any).modern_colors;
+        this.GenreColor = (data as any).contrast_colors;
         this.setUserGenres();
         this.renderGraph();
       },
@@ -77,7 +77,6 @@ export class ShowNetworkComponent implements OnInit {
     );
   }
 
-  //Preloading data and setting scene for graph rendering
   renderGraph():void {
     this.resetGraph();
     this.setScreenDimensions();
@@ -114,7 +113,7 @@ export class ShowNetworkComponent implements OnInit {
 
     const zoom = d3
     .zoom()
-    .scaleExtent([0.5, 10]) // Set the scale extent as needed
+    .scaleExtent([0.5, 2]) // Set the scale extent as needed
     .on('zoom', (event) => handleZoom(event));
     svg.call(zoom as any)
 
@@ -252,8 +251,8 @@ export class ShowNetworkComponent implements OnInit {
 
       // Highlight links connected to the selected node
       link.filter((d: any)=> d.source === artist || d.target === artist)
-      .style("stroke", "blue") 
-      .attr("stroke-width", 2)
+      .style("stroke", "black") 
+      .attr("stroke-width", 3)
 
       // Get array of node IDs connected to the selected node
       const connectedNodes = (link as any).data().reduce((acc:any, curr:any) => {
@@ -267,13 +266,13 @@ export class ShowNetworkComponent implements OnInit {
 
        // Change style of connected nodes
       node.filter((d: any) => connectedNodes.includes(d))
-      .style("fill", "blue")  // You can use a different fill color
-      .style("stroke", "blue");  // You can use a different stroke color
+      .style("fill", "black")  // You can use a different fill color
+      .style("stroke", "black");  // You can use a different stroke color
 
       // Selected node styling
       node.filter((d: any)=>d.id === artist.id)
-      .style("stroke", "black")
-      .style("fill", "blue")
+      .style("stroke", "blue")
+      .style("fill", "black")
     }
 
     function handleLinkHover(event: any, link: any) {

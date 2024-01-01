@@ -77,8 +77,6 @@ class SpotifyUser(APIView):
         
         response = get('https://api.spotify.com/v1/me', headers=headers).json()
         print(response)
-        # username = response.get('display_name')
-        # email = response.get('email')
         return Response(response, status=status.HTTP_200_OK)
         
 class TopArtists(APIView):

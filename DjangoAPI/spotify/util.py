@@ -72,12 +72,11 @@ def refresh_spotify_token(session_id):
 def get_spotify_account(session_id):
     status = None 
     item = None
-    
     access_token = get_access_token(session_id)
     headers = {'Authorization': 'Bearer ' + access_token}
         
     response = get('https://api.spotify.com/v1/me', headers=headers).json()
-   
+
     if 'error' in response: #API returned an error
         status = False 
     else:
@@ -94,34 +93,40 @@ def get_spotify_account(session_id):
 
 # -- Artist Network Feature -- 
 def get_user_top_artists(session_id, timeframe):
+    
     status = None 
     item = None
     
-    access_token = get_access_token(session_id)
-    headers = {'Authorization': 'Bearer ' + access_token}
+    is_authenticated = is_spotify_authenticated(session_id)
+    if is_authenticated:
+        access_token = get_access_token(session_id)
+        headers = {'Authorization': 'Bearer ' + access_token}
+        
+        url = 'https://api.spotify.com/v1/me/top/artists?limit=30&time_range=' + timeframe
+        response = get(url, headers=headers).json()
     
-    url = 'https://api.spotify.com/v1/me/top/artists?limit=30&time_range=' + timeframe
-    response = get(url, headers=headers).json()
-   
-    if 'error' in response: #API returned an error
-        status = False 
+        if 'error' in response: #API returned an error
+            status = False 
+        else:
+            items = response.get('items')
+            artists = []
+            rank = 1
+            for artist in items:
+                artObj = {
+                    'id': artist['id'],
+                    'name': artist['name'],
+                    'popularity': artist['popularity'],
+                    'genres': artist['genres'],
+                    'rank': rank,
+                    'image': artist['images'][0]['url'],
+                }
+                artists.append(artObj)
+                rank += 1
+            item = artists
+            status = True
     else:
-        items = response.get('items')
-        artists = []
-        rank = 1
-        for artist in items:
-            artObj = {
-                'id': artist['id'],
-                'name': artist['name'],
-                'popularity': artist['popularity'],
-                'genres': artist['genres'],
-                'rank': rank,
-                'image': artist['images'][0]['url'],
-            }
-            artists.append(artObj)
-            rank += 1
-        item = artists
-        status = True
+        status = False 
+        item = {'Message':'User is not authenticated via Spotify'}
     result = {'status': status, 'item': item}
     return result
 

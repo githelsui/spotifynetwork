@@ -63,7 +63,6 @@ class IsAuthenticated(APIView):
         return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
   
 class SpotifyUser(APIView):
-    #TODO: Remove this endpoint/view
     def get(self, request, formate=None):
         data = json.loads(request.body)
         session = data['session_id']

@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'spotify.apps.SpotifyConfig',
-    'SpotifyNetworkApp.apps.SpotifynetworkappConfig'
+    'SpotifyNetworkApp.apps.SpotifynetworkappConfig',
+    'Logging.apps.LoggingConfig'
 ]
 
 REST_FRAMEWORK = {
@@ -164,3 +165,44 @@ SESSION_COOKIE_DOMAIN = '.localhos:4200'
 SESSION_COOKIE_SECURE = False  # if using HTTPS
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_AGE = 1209600  # Set the session age as needed (in seconds)
+
+# LOGGING
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s %(levelname)s %(name)s %(message)s'
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',  # Set the lowest level you want to capture
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard'
+            },
+        'file': {
+            'level': DEBUG,
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'debug.log'),
+            'formatter': 'standard'
+        },
+        'database': {
+            'level': 'DEBUG',  # Set the lowest level you want to capture
+            'class': 'DjangoAPI.log_utils.CustomDatabaseHandler',
+        }
+    },
+    'loggers': {
+        'system': { 
+            'handlers': ['console','file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'app': {
+            'handlers': ['database'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+

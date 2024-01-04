@@ -7,30 +7,33 @@ from django.http import HttpResponseRedirect, HttpResponse
 from rest_framework_simplejwt.tokens import RefreshToken
 import json
 from .models import Users
+from Logging.logger import Logger
 
 class UserDAO:
     
     # init method or constructor
     def __init__(self):
-        # TODO: Initialize Logger object for DAO Layer
-        self.Logger = ''
+        self.Logger = Logger()
     
-    def user_exists(self, user):
-        email = user['UserEmail']
-        print("Email: " + email)
-        
+    def user_exists(self, user):    
         try:
+            email = user['UserEmail']
             user = Users.objects.get(UserEmail=email)
             if user:
                 return True
             return False
         except Users.DoesNotExist:
-            print("Does not exist")
+            return False
+        except Exception as e:
+            self.Logger.log(f'Failed to fetch user from database. Error: {e}', 'error', 'data access layer', 'get-user-exists-dao', 0)
             return False
     
     def save_user(self, user):
-        username = user['UserName']
-        email = user['UserEmail']
-        user = Users(UserEmail=email, UserName=username)
-        user.save()
-        return ''
+        try:
+            username = user['UserName']
+            email = user['UserEmail']
+            user = Users(UserEmail=email, UserName=username)
+            user.save()
+            self.Logger.log('Successfully saved newly created user to app.', 'info', 'data access layer', 'create-user-dao', 1)
+        except Exception as e:
+            self.Logger.log(f'Failed to save user to database. Error: {e}', 'error', 'data access layer', 'create-user-dao', 0)

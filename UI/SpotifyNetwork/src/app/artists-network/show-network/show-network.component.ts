@@ -107,7 +107,7 @@ export class ShowNetworkComponent implements OnInit {
         .id((d: any) => d.id)
         .distance((d: any) => this.getLinkDistance(d.weight))) 
       .force('charge', d3.forceManyBody().strength(-100))
-      .force('collide', d3.forceCollide().radius(150)) // Optional: Force to prevent node overlap
+      .force('collide', d3.forceCollide().radius(110)) // Optional: Force to prevent node overlap
       .force('center', d3.forceCenter(this.Width / 2.5, this.Height / 2.1))
       .alphaDecay(0.17);
 

@@ -1,10 +1,11 @@
 import logging 
 from .models import Log
 from datetime import datetime
+import hashlib
 
 class Logger:
     def __init__(self):
-        self.logger = logging.getLogger(__name__)
+        self.logger = logging.getLogger('system')
         self.console_handler = logging.StreamHandler()
         self.console_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
         self.log_levels = {
@@ -16,8 +17,7 @@ class Logger:
         }
         self.categories = ['view','controller','manager','service','data access layer'] #Logger names in Django 
     
-        
-    def log(self, message, log_level, category, operation, user_email):
+    def log(self, message, log_level, category, operation, success=None, session_id=None, user_id=None):
         status = None 
         
         # Validate message parameter
@@ -37,18 +37,24 @@ class Logger:
         if len(operation) > 50:
             raise ValueError(f"Invalid operation: {operation}. Exceeds 50 char limit.")
         
+        hashed_user = None
+        if user_id !=None:
+            hashed_user = hashlib.sha256(user_id.encode()).hexdigest()
+        hashed_session = None
+        if session_id != None:
+            hashed_session = hashlib.sha256(session_id.encode()).hexdigest()
+            
         # Get timestamp
         current_dt = datetime.now()
         formatted_dt = current_dt.strftime("%Y-%m-%d %H:%M:%S")
         
-        # Create handler and formatter specific to log_level parameter
-        self.console_handler.setLevel(level)
-        self.console_handler.setFormatter(self.console_formatter)
-        self.logger.addHandler(self.console_handler)
-        self.logger.log(level, message)
-        # Log being saved to sqlite db
-        log = Log(Message=message,LogLevel=log_level,Category=category,Timestamp=formatted_dt,Operation=operation,UserEmail=user_email)
+        # Log under any log_level saved to sqlite db
+        log = Log(Message=message,LogLevel=log_level,Category=category,Timestamp=formatted_dt,Operation=operation,Success=success,UserId=hashed_user,SessionId=hashed_session)
         log.save()
+        
+        # Log under debug and error level saved saved to debug.log & printed to console
+        if level == self.log_levels['debug'] or level == self.log_levels['error']:
+            self.logger.log(level,message)
+        
         status = True
-
         return status

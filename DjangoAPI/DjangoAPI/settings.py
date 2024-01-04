@@ -187,19 +187,10 @@ LOGGING = {
             'filename': os.path.join(BASE_DIR, 'logs', 'debug.log'),
             'formatter': 'standard'
         },
-        'database': {
-            'level': 'DEBUG',  # Set the lowest level you want to capture
-            'class': 'DjangoAPI.log_utils.CustomDatabaseHandler',
-        }
     },
     'loggers': {
         'system': { 
             'handlers': ['console','file'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'app': {
-            'handlers': ['database'],
             'level': 'DEBUG',
             'propagate': True,
         },

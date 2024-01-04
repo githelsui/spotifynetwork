@@ -3,21 +3,27 @@ from datetime import timedelta
 from django.utils import timezone
 from requests import Request, post, get
 from .credentials import CLIENT_ID, CLIENT_SECRET
+from Logging.logger import Logger
 
+logger = Logger()
 # -- Authentication / Authorization Core Component Feature --
 # Handling tokens from Spotify API
 def get_user_tokens(session_id):
     user_tokens = SpotifyToken.objects.filter(user=session_id)
     if user_tokens.exists():
+        logger.log('Successfully received Spotify session tokens', 'info', 'service', 'get-session-spotify-token', 1, session_id)
         return user_tokens[0]
     else:
+        logger.log('Successfully found zero spotify tokens for session', 'info', 'service', 'get-session-spotify-token', 1, session_id)
         return None
     
 def get_access_token(session_id):
     current_session = get_user_tokens(session_id)
     if current_session:
+        logger.log('Successfully received Spotify access tokens', 'info', 'service', 'get-access-spotify-token', 1, session_id)
         return current_session.access_token
     else:
+        logger.log('Successfully found zero spotify access tokens for session', 'info', 'service', 'get-access-spotify-token', 1, session_id)
         return None
 
 def update_or_create_user_tokens(session_id, access_token, token_type, expires_in, refresh_token):
@@ -33,11 +39,12 @@ def update_or_create_user_tokens(session_id, access_token, token_type, expires_i
         tokens.expires_in = expires_in 
         tokens.token_type = token_type
         tokens.save(update_fields=['access_token', 'refresh_token', 'expires_in', 'token_type']) 
-        print("Token being updated")
+        logger.log('Successfully updated spotify session token', 'info', 'service', 'update-session-spotify-token', 1, session_id)
     else: #create new token if user has never had a session before
         tokens = SpotifyToken(user=session_id, access_token=access_token, refresh_token=refresh_token, token_type=token_type, expires_in=expires_in)
         tokens.save()
-        print("New token being saved")
+        logger.log('Successfully created spotify session token', 'info', 'service', 'create-session-spotify-token', 1, session_id)
+
         
 def is_spotify_authenticated(session_id):
     tokens = get_user_tokens(session_id)
@@ -46,8 +53,10 @@ def is_spotify_authenticated(session_id):
         if expiry <= timezone.now(): #session is authenticated if token is not expired
             # if current expiration date has passed, refresh the token
             refresh_spotify_token(session_id)
+        logger.log('Successfully authenticated spotify user', 'info', 'service', 'auth-spotify-user', 1, session_id)
         return True
     # user is not authenticated
+    logger.log('Successfully flagged invalid authentication attemp for spotify user', 'info', 'service', 'auth-spotify-user', 1, session_id)
     return False
 
 def refresh_spotify_token(session_id):
@@ -60,6 +69,11 @@ def refresh_spotify_token(session_id):
         'client_secret': CLIENT_SECRET
     }).json() 
     
+    if 'error' in response:
+        logger.log('Failed to refresh spotify token', 'error', 'service', 'refresh-spotify-token',0,session_id)
+    else:
+        logger.log('Successfully refreshed spotify token', 'info', 'service', 'refresh-spotify-token',1,session_id)
+        
     # gets new access token info from the spotify api
     access_token = response.get('access_token')
     refresh_token = response.get('refresh_token')
@@ -78,6 +92,7 @@ def get_spotify_account(session_id):
     response = get('https://api.spotify.com/v1/me', headers=headers).json()
 
     if 'error' in response: #API returned an error
+        logger.log('Failed to get spotify user', 'error', 'service', 'get-spotify-user',0,session_id)
         status = False 
     else:
         username = response.get('display_name')
@@ -88,6 +103,7 @@ def get_spotify_account(session_id):
         }
         item = user
         status = True
+        logger.log('Successfully fetched spotify user', 'info', 'service', 'get-spotify-user',1,session_id)
     result = {'status': status, 'item': item}
     return result
 
@@ -106,6 +122,7 @@ def get_user_top_artists(session_id, timeframe):
         response = get(url, headers=headers).json()
     
         if 'error' in response: #API returned an error
+            logger.log('Failed to get spotify user top artists', 'error', 'service', 'get-spotify-top-artists',0,session_id)
             status = False 
         else:
             items = response.get('items')
@@ -124,6 +141,7 @@ def get_user_top_artists(session_id, timeframe):
                 rank += 1
             item = artists
             status = True
+            logger.log('Successfully fetched spotify user top artists', 'info', 'service', 'get-spotify-top-artists',1,session_id)
     else:
         status = False 
         item = {'Message':'User is not authenticated via Spotify'}
@@ -140,6 +158,7 @@ def get_related_artists(session_id, artist_id):
     url = 'https://api.spotify.com/v1/artists/' + artist_id + '/related-artists'
     response = get(url, headers=headers).json()
     if 'error' in response: #API returned an error
+        logger.log('Failed to get spotify related artists', 'error', 'service', 'get-spotify-related-artists',0,session_id)
         status = False 
     else:
         neighbors = []
@@ -157,5 +176,6 @@ def get_related_artists(session_id, artist_id):
             relatability_score -= 1
         item = neighbors
         status = True 
+        logger.log('Successfully fetched spotify related artists', 'info', 'service', 'get-spotify-related-artists',1,session_id)
     result = {'status': status, 'item': item}
     return result

@@ -7,6 +7,7 @@ class Log(models.Model):
     LogLevel = models.CharField(max_length=50)
     Category = models.CharField(max_length=50)
     Timestamp = models.DateTimeField(auto_now=True)
-    UserEmail = models.CharField(max_length=100)
     Operation = models.CharField(max_length=50, null=True, default=None)
     Success = models.IntegerField(max_length=1, null=True, default=None)
+    UserId = models.CharField(max_length=100, null=True)
+    SessionId = models.CharField(max_length=50, null=True)

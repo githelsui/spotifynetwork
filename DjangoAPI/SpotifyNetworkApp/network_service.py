@@ -7,10 +7,12 @@ from django.http import HttpResponseRedirect, HttpResponse
 from rest_framework_simplejwt.tokens import RefreshToken
 from .network_dao import NetworkDAO
 import json
+from Logging.logger import Logger
 
 class NetworkService:
     def __init__(self):
         self.NetworkDAO = NetworkDAO()
+        self.Logger = Logger()
         self.nodes = [] 
         self.nodesAPI = [] #data to be sent to client via our web api
         self.nodesDAO = [] #data to be saved to DAO
@@ -168,6 +170,7 @@ class NetworkService:
             target_id = link['target']
             if artist_id == source_id or artist_id == target_id:
                 return False
+        self.Logger.log('Outlier node identified in the network.', 'info', 'service', 'outlier-node', 1)
         return True
     
     def handle_outliers(self):
@@ -180,8 +183,6 @@ class NetworkService:
                     if source_id != target_id:
                         outlier_genres = self.outlier_genres(artist, target)
                         outlier_weight = len(outlier_genres) / 2
-                        print('\nShared Genres:')
-                        print(outlier_genres)
                         self.add_link(artist,target,outlier_weight,outlier_genres)
     
     def outlier_genres(self, source_node, target_node):
@@ -189,14 +190,9 @@ class NetworkService:
         genre_words_1 = [string.split() for string in source_node['genres']]
         flat_genre_1 = []
         [flat_genre_1.extend(sublist) for sublist in genre_words_1]
-        print('\nGENRE 1:')
-        print(flat_genre_1)
-        
         genre_words_2 = [string.split() for string in target_node['genres']]
         flat_genre_2 = []
         [flat_genre_2.extend(sublist) for sublist in genre_words_2]
-        print('\nGENRE 2:')
-        print(flat_genre_2)
         genre_words = []
         for genre in flat_genre_1:
             if genre in flat_genre_2:

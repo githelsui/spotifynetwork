@@ -5,6 +5,7 @@ import hashlib
 
 class Logger:
     def __init__(self):
+        # self.publisher = Publisher()
         self.logger = logging.getLogger('system')
         self.console_handler = logging.StreamHandler()
         self.console_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
@@ -15,8 +16,10 @@ class Logger:
         'error': logging.ERROR,
         'critical': logging.CRITICAL,
         }
-        self.categories = ['view','controller','manager','service','data access layer'] #Logger names in Django 
+        self.categories = ['view','controller','manager','service','data access layer', 'cross-cutting concerns'] 
     
+    # Saves log to database
+    # Prints error & debug logs to console
     def log(self, message, log_level, category, operation, success=None, session_id=None, user_id=None):
         status = None 
         
@@ -46,7 +49,7 @@ class Logger:
             
         # Get timestamp
         current_dt = datetime.now()
-        formatted_dt = current_dt.strftime("%Y-%m-%d %H:%M:%S")
+        formatted_dt = current_dt.strftime("%m-%d-%Y %H:%M:%S")
         
         # Log under any log_level saved to sqlite db
         log = Log(Message=message,LogLevel=log_level,Category=category,Timestamp=formatted_dt,Operation=operation,Success=success,UserId=hashed_user,SessionId=hashed_session)

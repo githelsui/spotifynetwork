@@ -1,2 +1,3 @@
 /DjangoAPI/spotify/credentials.py
-DjangoAPI/logs/debug.log
+/DjangoAPI/logs
+/DjangoAPI/config

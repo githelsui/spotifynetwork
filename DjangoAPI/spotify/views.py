@@ -63,6 +63,7 @@ def spotify_callback(request, format=None):
         update_or_create_user_tokens(request.session.session_key, access_token, token_type, expires_in, refresh_token)
         
         frontend_url = 'http://localhost:4200'
+        print('token = ' + str(request.session.session_key))
         return redirect(f'{frontend_url}?token={request.session.session_key}')
     
 class IsAuthenticated(APIView):

@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from google.auth import exceptions
+from google.auth.credentials import Credentials
+from google.oauth2 import service_account
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -197,3 +200,6 @@ LOGGING = {
     },
 }
 
+GOOGLE_APPLICATION_CREDENTIALS = os.path.join(BASE_DIR, 'config/gcp-service-account-key.json')
+GOOGLE_CLOUD_PROJECT_ID = 'spotifynetwork'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = GOOGLE_APPLICATION_CREDENTIALS

@@ -9,6 +9,7 @@ from .models import Users
 from.user_dao import UserDAO
 from spotify.util import get_spotify_account 
 from Logging.logger import Logger
+from Logging.publisher import Publisher
 import json
 
 class UserManager:
@@ -17,6 +18,7 @@ class UserManager:
     def __init__(self):
         self.UserDao = UserDAO()
         self.Logger = Logger()
+        self.Publisher = Publisher()
         
     def sign_in(self, session_id):
         status = None
@@ -33,6 +35,8 @@ class UserManager:
                 self.Logger.log(f'Successful attempt to create new user for app', 'info', 'manager', 'sign-in-user', 1)
                 self.UserDao.save_user(item)
                 status = True
+                self.Publisher.publish('Successful account registration', 'create-user-dao')
+            self.Publisher.publish('Successful user sign in', 'sign-in-user')
         else:
             self.Logger.log(f'Failed to sign user into app. Error thrown from spotify.utils.get_spotify_account', 'error', 'manager', 'sign-in-user', 0)
             status = False

@@ -26,23 +26,31 @@ export class SignInComponent implements OnInit {
 
   ngOnInit(): void {
       this.getSession();
-      this.checkIfAuthenticated();
+  }
+
+  getSession():void{
+    this.route.queryParams.subscribe(params => {
+      if('token' in params){
+        const token = params['token'];
+        if (token) {
+          this.AuthToken = token
+          this.checkIfAuthenticated();
+        } else {
+          this.resetAuth()
+          this.AuthToken = ''
+        }
+      }
+    });
   }
 
   checkIfAuthenticated():void {
     if(this.AuthToken != ""){
-      var payload = {
-        'session_id': this.AuthToken
-      }
+      var payload = {'session_id': this.AuthToken}
       this.service.getIsAuthenticated(payload).subscribe(data=>{
         this.IsAuthenticated = (data as any).status;
-        if(this.IsAuthenticated) {
-          this.loginUser();
-        } 
+        if(this.IsAuthenticated) { this.loginUser();} 
       })
-    } 
-    else // session already exists,  never logged out
-    {
+    } else {// session already exists,  never logged out
       this.sessionExists();
     }
   }
@@ -54,18 +62,8 @@ export class SignInComponent implements OnInit {
     }
   }
 
-  getSession():void{
-    this.route.queryParams.subscribe(params => {
-      if('token' in params){
-        const token = params['token'];
-        if (token) {
-          this.AuthToken = token
-        }
-      }
-    });
-  }
-
-  loginSpotify():void {
+   //Button trigger -> authentication page
+   loginSpotify():void {
     this.service.getSpotifyAuthSignIn().subscribe(data=>{
       var url = (data as any).url;
       window.location.replace(url)
@@ -91,7 +89,7 @@ export class SignInComponent implements OnInit {
     });
   }
 
-  logout(): void {
+  resetAuth(): void {
     this.authService.clearAuthorization();
   }
 

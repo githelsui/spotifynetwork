@@ -220,6 +220,7 @@ export class ShowNetworkComponent implements OnInit {
 
 
     function handleNodeHover(event: any, artist: any) {
+      self.publishFeatureSelection('artist-details','Artist Details selected by user')
       var genres = getGenreList(artist)
       var neighbors = getNeighborList(artist)
       var timeframe = timeframeDetails()
@@ -244,6 +245,7 @@ export class ShowNetworkComponent implements OnInit {
     }
 
     function handleNodeClick(event: any, artist: any){
+      self.publishFeatureSelection('artist-connection','Artist Connection selected by user')
       link.style("stroke", "gray");
       link.attr("stroke-width", 0.5);
       node.style("stroke", "#D6D6D6")
@@ -276,6 +278,7 @@ export class ShowNetworkComponent implements OnInit {
     }
 
     function handleLinkHover(event: any, link: any) {
+      self.publishFeatureSelection('link-details','Link Details selected by user')
       var genres = getGenreList(link)
       const content = `<div class="d-flex justify-content-center align-items-center">
       <div class="d-flex flex-column">
@@ -435,6 +438,7 @@ export class ShowNetworkComponent implements OnInit {
 
   // Receives data from legend selection child component
   setSelectedGenre(genre: string) {
+    this.publishFeatureSelection('genre-highlight', 'Genre Highlight selected by user')
     this.SelectedGenre = genre;
     this.highlightArtistsOfGenre(genre)
   }
@@ -473,5 +477,15 @@ export class ShowNetworkComponent implements OnInit {
     this.ResetGenre = true;
     this.SelectedGenre = "";
     this.renderGraph()
+  }
+
+  publishFeatureSelection(feature: any, message: any) {
+    var attr = {'feature':feature}
+    var payload = {
+      'message': message,
+      'topic': 'feature-selection',
+      'attributes': attr
+    }
+    this.service.publish(payload).subscribe(data=>{})
   }
 }

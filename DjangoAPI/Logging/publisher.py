@@ -11,7 +11,7 @@ class Publisher:
         self.logger = Logger()
         
     def publish(self, message, operation, attributes=None):
-        # Your topic name
+        
         topic_path = 'projects/{project_id}/topics/{topic_name}'.format(
             project_id=self.project_id,
             topic_name=operation

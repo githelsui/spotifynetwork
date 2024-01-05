@@ -15,7 +15,7 @@ from Logging.publisher import Publisher
 # Create your views here.
 class UserSignIn(APIView):
     
-      # init method or constructor
+    # init method or constructor
     def __init__(self):
         self.UserManager = UserManager()
         self.Logger = Logger()

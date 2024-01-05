@@ -21,5 +21,6 @@ from django.urls import path, re_path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('spotify/', include('spotify.urls')),
-    path('api/', include('SpotifyNetworkApp.urls'))
+    path('api/', include('SpotifyNetworkApp.urls')),
+    path('cross-functional/', include('Logging.urls'))
 ]

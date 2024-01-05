@@ -42,4 +42,9 @@ export class SharedService {
   getNetwork(val:any):Observable<any[]>{
     return this.http.post<any[]>(this.APIUrl + 'api/get-network', val);
   }
+
+  // Cross-Functional Concerns
+  publish(val:any):Observable<any[]>{
+    return this.http.post<any[]>(this.APIUrl + 'cross-functional/publish-message', val);
+  }
 }

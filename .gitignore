@@ -1,3 +1,16 @@
 /DjangoAPI/spotify/credentials.py
 /DjangoAPI/logs
 /DjangoAPI/config
+DjangoAPI/db.sqlite3
+DjangoAPI/DjangoAPI/__pycache__/settings.cpython-39.pyc
+DjangoAPI/Logging/__pycache__/logger.cpython-39.pyc
+DjangoAPI/Logging/__pycache__/models.cpython-39.pyc
+DjangoAPI/Logging/migrations/0006_alter_log_timestamp.py
+DjangoAPI/Logging/migrations/0007_alter_log_timestamp.py
+DjangoAPI/Logging/migrations/__pycache__/0006_alter_log_timestamp.cpython-39.pyc
+DjangoAPI/Logging/migrations/__pycache__/0007_alter_log_timestamp.cpython-39.pyc
+DjangoAPI/logs/debug.log
+DjangoAPI/spotify/__pycache__/util.cpython-39.pyc
+DjangoAPI/spotify/__pycache__/views.cpython-39.pyc
+DjangoAPI/SpotifyNetworkApp/__pycache__/user_manager.cpython-39.pyc
+DjangoAPI/SpotifyNetworkApp/__pycache__/views.cpython-39.pyc

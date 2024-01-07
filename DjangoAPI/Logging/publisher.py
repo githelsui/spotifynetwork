@@ -1,6 +1,7 @@
 from google.cloud import pubsub_v1,exceptions
 from django.http import HttpResponse
 from concurrent import futures
+from datetime import datetime
 from .logger import Logger
 
 class Publisher:
@@ -19,9 +20,18 @@ class Publisher:
         
         try:
             data = message.encode('utf-8')
+            current_dt = datetime.now()
+            formatted_dt = current_dt.strftime("%m-%d-%Y %H:%M:%S")
+            date = current_dt.date().strftime("%m-%d-%Y")
+            time = current_dt.time().strftime("%H:%M:%S")
             if attributes:
-                self.publisher.publish(topic_path, data, **attributes)
+                attributes['date'] = date
+                attributes['time'] = time
             else:
-                self.publisher.publish(topic_path, data)
+                attributes = { 'date': date,
+                                'time': time
+                             }
+            self.publisher.publish(topic_path, data, **attributes)
+            self.logger.log(f'Cloud PubSub message published. Topic: {operation}', 'info', 'cross-cutting concerns', operation, 1)
         except exceptions.GoogleCloudError as e:
             self.logger.log(f'Cloud PubSub message failed to publish. Error: {e}', 'error', 'cross-cutting concerns', operation, 0)

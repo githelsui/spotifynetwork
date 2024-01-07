@@ -14,3 +14,4 @@ DjangoAPI/spotify/__pycache__/util.cpython-39.pyc
 DjangoAPI/spotify/__pycache__/views.cpython-39.pyc
 DjangoAPI/SpotifyNetworkApp/__pycache__/user_manager.cpython-39.pyc
 DjangoAPI/SpotifyNetworkApp/__pycache__/views.cpython-39.pyc
+DjangoAPI/DataFlow/credentials.py

@@ -41,7 +41,7 @@ def run_pipeline(argv=None):
             pipeline
             | 'ReadNetworkSub' >> beam.io.ReadFromPubSub(subscription=NETWORK_TOPIC_SUB,
                                                         with_attributes=True)
-            | 'Apply Windowing to Network Messages' >> beam.WindowInto(FixedWindows(86400))  # PRODUCTION: 86400 seconds = 1 day  
+            | 'Apply Windowing to Network Messages' >> beam.WindowInto(FixedWindows(5))  # PRODUCTION: 86400 seconds = 1 day  
         )                                                                                # TESTING: 5 seconds
         
         # Transform: Count all instances of network selections by timeframe and date

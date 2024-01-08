@@ -4,11 +4,12 @@ from datetime import datetime
 import random
 from google.auth import jwt
 from google.cloud import pubsub_v1
-from credentials import GOOGLE_APPLICATION_CREDENTIALS,  GOOGLE_CLOUD_PROJECT_ID, FEATURE_TOPIC
+from credentials import GOOGLE_APPLICATION_CREDENTIALS,  GOOGLE_CLOUD_PROJECT_ID, FEATURE_TOPIC, NETWORK_SELECT_TOPIC
 
 # --- Base variables and auth path
 MAX_MESSAGES = 10000
 FEATURES = ['artist-details', 'link-details', 'artist-connection', 'genre-highlight']
+NETWORKS = ['long_term', 'short_term', 'medium_term']
 
 # --- PubSub Utils Classes
 class PubSubPublisher:
@@ -30,18 +31,18 @@ class PubSubPublisher:
 # --- Main publishing script
 def main():
     i = 0
-    publisher = PubSubPublisher(GOOGLE_APPLICATION_CREDENTIALS, GOOGLE_CLOUD_PROJECT_ID, FEATURE_TOPIC)
+    publisher = PubSubPublisher(GOOGLE_APPLICATION_CREDENTIALS, GOOGLE_CLOUD_PROJECT_ID, NETWORK_SELECT_TOPIC)
     while i < MAX_MESSAGES:
         data = "test message".encode('utf-8')
         current_dt = datetime.now()
         formatted_dt = current_dt.strftime("%m-%d-%Y %H:%M:%S")
         cDate = current_dt.date().strftime("%m-%d-%Y")
         cTime = current_dt.time().strftime("%H:%M:%S")
-        rand_feature= random.choice(FEATURES)
+        rand= random.choice(NETWORKS)
         attributes = { 
                       'date': cDate,
                      'time': cTime,
-                      'feature': rand_feature,
+                      'timeframe': rand,
                        'timestamp': formatted_dt
                     }
         publisher.publish(data, attributes)

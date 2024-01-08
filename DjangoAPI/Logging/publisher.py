@@ -27,9 +27,12 @@ class Publisher:
             if attributes:
                 attributes['date'] = date
                 attributes['time'] = time
+                attributes['timestamp'] = formatted_dt
             else:
-                attributes = { 'date': date,
-                                'time': time
+                attributes = {  
+                                'date': date,
+                                'time': time,
+                                'timestamp': formatted_dt
                              }
             self.publisher.publish(topic_path, data, **attributes)
             self.logger.log(f'Cloud PubSub message published. Topic: {operation}', 'info', 'cross-cutting concerns', operation, 1)

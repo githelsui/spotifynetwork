@@ -9,13 +9,18 @@ from django.http import HttpResponseRedirect, HttpResponse
 from rest_framework_simplejwt.tokens import RefreshToken
 import json
 from Logging.logger import Logger
+from django_ratelimit.decorators import ratelimit
+from rest_framework.throttling import UserRateThrottle
 
 # Create your views here.
 logger = Logger()
 # API endpoints to authenticate our application / request access
 class AuthURL(APIView):
     #returns url that redirects to spotify login
+    # @ratelimit(key='get', rate='150/m', block=True)
     def get(self, request, format=None):
+        # throttle_classes = [UserRateThrottle]
+
         logger.log(message='Attempt/request to get spotify authorization url', log_level='info', category='view', operation='get-spotify-auth-url')
         scopes = 'user-read-private user-read-email user-top-read user-read-recently-played' #what operations and info we want to access from spotify api
         # url redirecting to spotify login + request for authorization
@@ -28,8 +33,12 @@ class AuthURL(APIView):
         
         if url == '':
             logger.log('Failed to get spotify authorization url', 'error', 'view', 'get-spotify-auth-url',0)
-            
-        return Response({'url': url}, status=status.HTTP_200_OK)
+    
+        was_limited = getattr(request, 'limited', False)
+        if was_limited:
+            return Response({'error': 'Rate limit exceeded'}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response({'url': url}, status=status.HTTP_200_OK)
     # https://accounts.spotify.com/authorize?scope=user-top-read+user-read-recently-played&response_type=code&redirect_uri=
     
 # Handles redirect after successful request for AuthURL
@@ -67,8 +76,16 @@ def spotify_callback(request, format=None):
         return redirect(f'{frontend_url}?token={request.session.session_key}')
     
 class IsAuthenticated(APIView):
+    # @ratelimit(key='post:is-authenticated', rate='150/m', block=True)
     def post(self, request, formate=None):
+        # throttle_classes = [UserRateThrottle]
+
         data = json.loads(request.body)
         session = data['session_id']
         is_authenticated = is_spotify_authenticated(session)
-        return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
+        was_limited = getattr(request, 'limited', False)
+        if was_limited:
+            return Response({'error': 'Rate limit exceeded'}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
+    

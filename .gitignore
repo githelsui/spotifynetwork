@@ -30,3 +30,12 @@ DjangoAPI/spotify/__pycache__/util.cpython-39.pyc
 DjangoAPI/spotify/__pycache__/views.cpython-39.pyc
 DjangoAPI/SpotifyNetworkApp/__pycache__/user_manager.cpython-39.pyc
 DjangoAPI/SpotifyNetworkApp/__pycache__/views.cpython-39.pyc
+DjangoAPI/SpotifyNetworkApp/__pycache__/views.cpython-39.pyc
+DjangoAPI/SpotifyNetworkApp/__pycache__/user_manager.cpython-39.pyc
+DjangoAPI/Logging/__pycache__/publisher.cpython-39.pyc
+DjangoAPI/Logging/__pycache__/models.cpython-39.pyc
+DjangoAPI/Logging/__pycache__/logger.cpython-39.pyc
+DjangoAPI/DjangoAPI/__pycache__/urls.cpython-39.pyc
+DjangoAPI/DjangoAPI/__pycache__/settings.cpython-39.pyc
+DjangoAPI/db.sqlite3
+.DS_Store

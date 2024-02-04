@@ -11,7 +11,7 @@ export class SharedService {
   private genresUrl = 'assets/colors.json';
 
   //Access to our Web API -> Backend 
-  readonly APIUrl = "http://127.0.0.1:8000/";
+  readonly APIUrl = "http://54.219.61.134:80/";
 
   constructor(private http:HttpClient) { }
 

@@ -29,8 +29,7 @@ SECRET_KEY = 'django-insecure-(nwetorcz##pt6tbnqfl_f^=u)e4%lvnzz*5%@)d$e(blp=a4^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS =  ['54.219.61.134']
 
 # Application definition
 
@@ -73,7 +72,8 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
+    "http://54.219.61.134:80",
+    "http://54.219.61.134:8000"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -178,7 +178,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_NAME = 'my_session_id'  # Replace with your desired session cookie name
 SESSION_COOKIE_AGE = 3600  # Set the session age as needed (in seconds)
 SESSION_COOKIE_PATH = '/'
-SESSION_COOKIE_DOMAIN = '.localhos:4200'
+SESSION_COOKIE_DOMAIN = '.54.219.61.134:80'
 SESSION_COOKIE_SECURE = False  # if using HTTPS
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_AGE = 1209600  # Set the session age as needed (in seconds)

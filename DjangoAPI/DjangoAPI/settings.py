@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-(nwetorcz##pt6tbnqfl_f^=u)e4%lvnzz*5%@)d$e(blp=a4^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS =  ['54.219.61.134', '0.0.0.0', '127.0.0.1']
+ALLOWED_HOSTS =  ['54.219.61.134', '0.0.0.0', '127.0.0.1', 'ntwrkfy.com']
 
 # Application definition
 
@@ -72,7 +72,8 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [
-    "http://54.219.61.134:80"
+    "http://54.219.61.134:80",
+    "http://ntwrkfy.com"
 ]
 
 CORS_ALLOW_CREDENTIALS = True

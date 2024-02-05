@@ -73,7 +73,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://54.219.61.134:80",
-    "http://ntwrkfy.com"
+    "http://ntwrkfy.com",
+    "https://ntwrkfy.com"
 ]
 
 CORS_ALLOW_CREDENTIALS = True

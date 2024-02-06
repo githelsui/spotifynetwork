@@ -56,3 +56,7 @@ animation: typing 4s steps(40) 1s forwards,
             blink 1s step-end infinite;
 border-right: 2px solid; /* Add a cursor effect */
 }
+
+a {
+  color: black;
+}

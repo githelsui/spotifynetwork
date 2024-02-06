@@ -6,7 +6,7 @@
     align-items:  flex-end;
     justify-content: flex-end;
     text-align: right;
-    z-index: 1000; /* Ensure it's above other elements */
+    /* z-index: 1000; Ensure it's above other elements */
     background-color: transparent;
   }
   
@@ -20,6 +20,7 @@
   .legend-label {
     font-size: 16px;
     background-color: transparent;
+    color: black;
     text-align: right;
     padding: 3px;
     margin-bottom: 5px;
@@ -53,8 +54,13 @@
 
 /* Media query for small screens */
 @media screen and (max-width: 600px) {
+  /* TEMPORARY */
+  .overlay-container {
+    display: none;
+  }
+  
   .legend-label {
-    font-size: 12px; /* Adjust the value based on your preference */
+    font-size: 12px; 
     padding: 0px;
     margin-bottom: 0px;
   }
@@ -67,6 +73,11 @@
   
 /* Additional media queries for even smaller screens if needed */
 @media screen and (max-width: 400px) {
+  /* TEMPORARY */
+  .overlay-container {
+    display: none;
+  }
+
   .legend-label {
     font-size: 12px; /* Adjust the value based on your preference */
     padding: 0px;

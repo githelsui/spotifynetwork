@@ -111,12 +111,13 @@ export class ShowNetworkComponent implements OnInit {
       .force('center', d3.forceCenter(this.Width / 2.5, this.Height / 2.1))
       .alphaDecay(0.17);
 
+    
     const zoom = d3
     .zoom()
-    .scaleExtent([0.5, 2]) // Set the scale extent as needed
+    .scaleExtent([0.2, 2]) // Set the scale extent as needed
     .on('zoom', (event) => handleZoom(event));
     svg.call(zoom as any)
-
+    var initialMobileTransform = d3.zoomIdentity.translate(100, 250).scale(0.3);
 
     const link = svg.selectAll('line')
       .data(this.Links)
@@ -178,6 +179,17 @@ export class ShowNetworkComponent implements OnInit {
     .style("border", "solid")
     .style('border', '1px solid gray') 
     .style("padding", "10px");
+
+    var mobileTransform = false;
+    if(this.Width < 600){
+      // mobileTransform = true;
+      node.attr('transform', (initialMobileTransform as any));
+      labels.attr("transform", (initialMobileTransform as any));
+      link.attr("transform", (initialMobileTransform as any));
+      // labels.attr("transform", (initialTransform as any));
+      // svg.call((zoom as any), d3.zoomIdentity.scale(0.2))
+      // svg.call(d3.zoom().scaleExtent([0.2, 2]).on('zoom', (handleZoom as any)));
+    } 
 
     simulation
       .on('tick', () => {
@@ -343,9 +355,15 @@ export class ShowNetworkComponent implements OnInit {
 
     function handleZoom(event: any) {
       // Update the positions of nodes based on the zoom transformation
-      node.attr("transform", event.transform);
-      link.attr("transform", event.transform);
-      labels.attr("transform", event.transform);
+      if(mobileTransform){
+        node.attr('transform', (initialMobileTransform as any));
+        labels.attr("transform", (initialMobileTransform as any));
+        link.attr("transform", (initialMobileTransform as any));
+      } else {
+        node.attr("transform", event.transform);
+        link.attr("transform", event.transform);
+        labels.attr("transform", event.transform);
+      }
     }
 
     function dragstarted(event: any){

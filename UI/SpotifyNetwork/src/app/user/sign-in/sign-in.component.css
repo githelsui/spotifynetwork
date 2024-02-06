@@ -3,6 +3,7 @@
     border: 0px;
     font-weight: 100;
     transition: background-color 0.3s ease;
+    color: black;
 }
 
 .sign-in-button:hover {
@@ -12,4 +13,32 @@
 
 .title {
     font-weight:300;
+    color: black;
+    padding-bottom: 5px;
 }
+
+.description {
+    font-size: 15px;
+}
+
+/* Media query for small screens */
+@media screen and (max-width: 600px) {
+    .login-container {
+        width:80%;
+    }
+
+    .description {
+        overflow-wrap: break-word;
+    }
+  }
+    
+  /* Additional media queries for even smaller screens if needed */
+  @media screen and (max-width: 400px) {
+    .login-container {
+        width:70%;
+    }
+
+    .description {
+        overflow-wrap: break-word;
+    }
+  }

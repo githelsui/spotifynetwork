@@ -135,7 +135,7 @@ def get_user_top_artists(session_id, timeframe):
                     'popularity': artist['popularity'],
                     'genres': artist['genres'],
                     'rank': rank,
-                    'image': artist['images'][0]['url'],
+                    'image': 'https://www.samys.com/images/product/main/S-008607x1000.jpg' if len(artist['images'])==0 else artist['images'][0]['url'],
                 }
                 artists.append(artObj)
                 rank += 1

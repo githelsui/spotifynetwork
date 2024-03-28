@@ -14,6 +14,7 @@ class Artists(models.Model):
     ArtistPopularity = models.IntegerField()
     ArtistGenre = models.JSONField()
     ArtistImage = models.CharField(max_length=100)
+    ArtistUrl = models.CharField(max_length=100)
     SimilarArtists = models.JSONField() # list of similar artist's unique ids
     
 class ArtistAssocs(models.Model): 

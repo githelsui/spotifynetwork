@@ -136,6 +136,7 @@ def get_user_top_artists(session_id, timeframe):
                     'genres': artist['genres'],
                     'rank': rank,
                     'image': 'https://www.samys.com/images/product/main/S-008607x1000.jpg' if len(artist['images'])==0 else artist['images'][0]['url'],
+                    'url': 'https://spotify.com' if len(artist['external_urls']) == 0 else artist['external_urls']['spotify']
                 }
                 artists.append(artObj)
                 rank += 1

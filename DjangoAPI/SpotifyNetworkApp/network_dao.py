@@ -41,8 +41,9 @@ class NetworkDAO:
                 popularity = artist['ArtistPopularity']
                 genre = artist['ArtistGenre']
                 image = artist['ArtistImage']
+                url = artist['ArtistUrl']
                 similar = artist['SimilarArtists']
-                artist_obj = Artists(ArtistId=id, ArtistName=name, ArtistPopularity=popularity, ArtistGenre=genre, ArtistImage=image, SimilarArtists=similar)
+                artist_obj = Artists(ArtistId=id, ArtistName=name, ArtistPopularity=popularity, ArtistGenre=genre, ArtistImage=image, SimilarArtists=similar, ArtistUrl=url)
                 artist_obj.save()
                 self.Logger.log(f'Successfully saved new artist to database.', 'info', 'data access layer', 'save-artist-dao', 1)
                 return True

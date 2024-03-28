@@ -39,6 +39,7 @@ class NetworkService:
                 'ArtistPopularity': artist['popularity'],
                 'ArtistGenre': [] if (len(artist['genres']) == 0 or artist['genres'][0] == 'None') else artist['genres'],
                 'ArtistImage': artist['image'],
+                'ArtistUrl': artist['url'],
                 'SimilarArtists': artist['similar_artists']
             }
             artistsDAO.append(artistDao)
@@ -50,6 +51,7 @@ class NetworkService:
                 'genre': "N/A" if (len(artist['genres']) == 0 or artist['genres'][0] == 'None') else artist['genres'][0],
                 'genres': artistDao['ArtistGenre'],
                 'image': artist['image'],
+                'url': artist['url'],
                 'rank': artist['rank'],
             }
             self.nodes.append(artistAPI)

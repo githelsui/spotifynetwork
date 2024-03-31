@@ -24,6 +24,7 @@ export class ShowNetworkComponent implements OnInit {
   IsLoading:boolean=true;
   NodeObjs:any=null;
   ResetGenre:boolean=false;
+  SpotifyLogo:any=null;
 
   constructor(
     private service:SharedService,
@@ -166,7 +167,7 @@ export class ShowNetworkComponent implements OnInit {
     .style('cursor', 'pointer')
     .on('mouseover', (event, d) => handleNodeHover(event, d)) 
     .on('click', (event, d) => handleNodeClick(event, d))
-    .on('mouseout', () => hideTooltip())
+    // .on('mouseout', () => hideTooltip())
     .text((d: any) => (d.name).toUpperCase());
 
     // create a tooltip
@@ -246,7 +247,13 @@ export class ShowNetworkComponent implements OnInit {
           <h6 style="font-weight: 300;">${genres}</h6>
           <h6 style="font-weight: 400;">/Most Similar In Your Network:</h6>
           <h6 style="font-weight: 300;">${neighbors}</h6>
-      </div>
+      </div> 
+      <a href="${artist.url}" target="_blank">
+        <button class="spotify-link" style="padding: 1px 15px 1px 1px; border: 0.5px solid black; font-family: sans-serif; letter-spacing: 1px;">
+        <img src="./assets/spotify_logo.png" width="50" style="text-align: center;">
+        Open Spotify
+       </button>
+      </a>
       </div>`
 
       tooltip.html(content);

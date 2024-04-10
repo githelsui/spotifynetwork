@@ -21,6 +21,11 @@
     font-size: 15px;
 }
 
+footer {
+    background-color: #EFEFEF;
+    padding: 50px;
+}
+
 /* Media query for small screens */
 @media screen and (max-width: 600px) {
     .login-container {

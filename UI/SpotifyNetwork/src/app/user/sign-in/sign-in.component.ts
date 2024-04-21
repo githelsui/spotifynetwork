@@ -93,4 +93,8 @@ export class SignInComponent implements OnInit {
     this.authService.clearAuthorization();
   }
 
+  goToBottom(): void{
+    window.scrollTo(0,document.body.scrollHeight);
+  }
+
 }

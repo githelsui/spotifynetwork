@@ -5,6 +5,7 @@ import { ArtistsNetworkComponent } from './artists-network/artists-network.compo
 import { UserComponent } from './user/user.component'
 import { SignInComponent } from './user/sign-in/sign-in.component';
 import { UnauthViewComponent } from './unauth-view/unauth-view.component';
+import { AboutComponent } from './about/about.component';
 
 const routes: Routes = [
   {
@@ -15,7 +16,16 @@ const routes: Routes = [
   },
   {
     path: 'unauth-view', component: UnauthViewComponent
+  },
+  {
+    path: 'about', component: AboutComponent
   }
+   // {
+  //   path: 'credits', component: CreditsComponent
+  // }
+   // {
+  //   path: 'team', component: TeamComponent
+  // }
 ];
 
 @NgModule({

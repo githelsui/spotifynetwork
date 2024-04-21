@@ -21,6 +21,17 @@
     font-size: 15px;
 }
 
+.slide-down {
+    background-color: transparent;
+    border: 0;
+    padding: 10px;
+    justify-content: right;
+    align-items: right;
+    position: fixed;
+    bottom: 20px; /* Adjust as needed */
+    right: 20px; /* Adjust as needed */
+}
+
 footer {
     background-color: #EFEFEF;
     padding: 50px;

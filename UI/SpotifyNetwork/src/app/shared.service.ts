@@ -33,11 +33,6 @@ export class SharedService {
     return this.http.post<any[]>(this.APIUrl + 'spotify/is-authenticated', val);
   } 
 
-  //Genres
-  getGenreColor(): Observable<any> {
-    return this.http.get(this.genresUrl);
-  }
-
   //Network
   getNetwork(val:any):Observable<any[]>{
     return this.http.post<any[]>(this.APIUrl + 'api/get-network', val);
@@ -46,5 +41,10 @@ export class SharedService {
   // Cross-Functional Concerns
   publish(val:any):Observable<any[]>{
     return this.http.post<any[]>(this.APIUrl + 'cross-functional/publish-message', val);
+  }
+
+  //Assets
+  getGenreColor(): Observable<any> {
+    return this.http.get(this.genresUrl);
   }
 }

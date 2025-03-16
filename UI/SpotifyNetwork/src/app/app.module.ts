@@ -15,6 +15,8 @@ import { NetworkSidebarComponent } from './artists-network/network-sidebar/netwo
 import { NetworkLegendComponent } from './artists-network/show-network/network-legend/network-legend.component';
 import { LoadingComponent } from './loading/loading.component';
 import { AboutComponent } from './about/about.component';
+import { CreditsComponent } from './credits/credits.component';
+import { AudioVisComponent } from './audio-vis/audio-vis.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { AboutComponent } from './about/about.component';
     NetworkSidebarComponent,
     NetworkLegendComponent,
     LoadingComponent,
-    AboutComponent
+    AboutComponent,
+    CreditsComponent,
+    AudioVisComponent
   ],
   imports: [
     BrowserModule,

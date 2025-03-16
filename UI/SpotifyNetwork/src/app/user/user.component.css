@@ -1,4 +1,19 @@
 /* modal.component.css */
+a {
+  font-size: 25px;
+  padding: 5px 20px 10px 15px;
+  transition: background-color 0.3s ease;
+  text-decoration-thickness: 1px;
+}
+
+a:hover{
+  background-color:  #EFEFEF;
+}
+
+.main-feature-selections{
+  padding: 10px;
+}
+
 .modal-overlay {
     position: fixed;
     top: 0;

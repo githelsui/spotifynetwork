@@ -6,6 +6,8 @@ import { UserComponent } from './user/user.component'
 import { SignInComponent } from './user/sign-in/sign-in.component';
 import { UnauthViewComponent } from './unauth-view/unauth-view.component';
 import { AboutComponent } from './about/about.component';
+import { CreditsComponent } from './credits/credits.component';
+import { AudioVisComponent } from './audio-vis/audio-vis.component';
 
 const routes: Routes = [
   {
@@ -19,10 +21,13 @@ const routes: Routes = [
   },
   {
     path: 'about', component: AboutComponent
+  },
+  {
+    path: 'credits', component: CreditsComponent
+  },
+  {
+    path: 'audio-vis', component: AudioVisComponent
   }
-   // {
-  //   path: 'credits', component: CreditsComponent
-  // }
    // {
   //   path: 'team', component: TeamComponent
   // }

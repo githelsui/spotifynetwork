@@ -4,6 +4,10 @@
         <h2 style="font-weight: 100">> {{UserName}}</h2>
       </div>
       <div class="modal-body">
+          <div class="main-feature-selections d-flex flex-column">
+            <a routerLink="/artists-network" (click)="closeModal()">artists network</a>
+            <a routerLink="/audio-vis" (click)="closeModal()">audio visualization</a>
+          </div>
         <button class="modal-button" (click)="closeModal()">go back</button>
         <button class="modal-button" (click)="logout()">logout</button>    
       </div>

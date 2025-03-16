@@ -1,0 +1,31 @@
+body {
+    background-color: #000;
+  }
+
+  canvas {
+    position: absolute;
+    top: -10;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .visualizer-bg{
+    background-color: #000;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: auto min-content;
+    justify-content: center;
+    justify-items: end;
+    align-items: center;
+    gap: 5px 10px;
+  }
+
+  input {
+    margin: 0;
+    opacity: 0;
+  }
